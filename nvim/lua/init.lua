@@ -1,0 +1,7 @@
+require "pluginList"
+require "settings"
+require "keymaps"
+require "theme"
+require "telescope"
+require "lualine"
+require "comment"
