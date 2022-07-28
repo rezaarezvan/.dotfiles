@@ -31,8 +31,14 @@ return require('packer').startup(function()
   use 'mfussenegger/nvim-dap'
   use { "rcarriga/nvim-dap-ui", requires = { "mfussenegger/nvim-dap" } }
   use 'theHamsta/nvim-dap-virtual-text'
+  use({
+    "ErichDonGubler/lsp_lines.nvim",
+    config = function()
+      require("lsp_lines").setup()
+    end,
+  })
   --if is_bootstrap then
-    --require('packer').sync()
+  --require('packer').sync()
   --end
 end)
 
