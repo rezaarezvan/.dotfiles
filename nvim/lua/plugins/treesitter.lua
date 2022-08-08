@@ -8,7 +8,7 @@ require('nvim-treesitter.configs').setup {
     incremental_selection = {
       enable = true,
       keymaps = {
-        init_selection = '<c-a>',
+        init_selection = '<C-e>',
       },
     },
     -- Fix keymappings, temporary
