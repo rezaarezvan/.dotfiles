@@ -12,7 +12,7 @@ local dap = require('dap')
 dap.adapters.cppdbg = {
   id = 'cppdbg',
   type = 'executable',
-  command = 'C:\\Users\\Reza\\.vscode\\extensions\\ms-vscode.cpptools-1.10.8-win32-x64\\debugAdapters\\bin\\OpenDebugAD7.exe',
+  command = 'C:\\Users\\Reza\\.vscode\\extensions\\ms-vscode.cpptools-1.11.4-win32-x64\\debugAdapters\\bin\\OpenDebugAD7.exe',
   options = {
     detached = false
   }

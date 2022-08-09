@@ -1,7 +1,7 @@
-require "pluginList"
+require "plugins"
 require "theme"
-require "settings"
-require "keymaps"
+require "set"
+require "keymap"
 
 require "plugins.comment"
 require "plugins.telescope"
