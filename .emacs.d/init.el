@@ -1,11 +1,8 @@
 (cd "C:/Users/Reza/Desktop")
-
-(message "hello from init.el")
 (require 'package)
+
 (add-to-list 'package-archives
              '("melpa-stable" . "https://stable.melpa.org/packages/") t)
-(package-initialize)
-
 
 (defvar bootstrap-version)
 (let ((bootstrap-file
@@ -29,12 +26,7 @@
 (straight-use-package '(mindre-theme :type git :host github
                                    :repo "erikbackman/mindre-theme"))
 
-
 (require 'nano)
-
-
-
-
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
