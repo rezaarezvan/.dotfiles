@@ -1,0 +1,1 @@
+c:/Users/Reza/AppData/Roaming/.emacs.d/straight/repos/mindre-theme/mindre-theme.el

@@ -1,0 +1,1 @@
+c:/Users/Reza/AppData/Roaming/.emacs.d/straight/repos/nano-theme/README.md
