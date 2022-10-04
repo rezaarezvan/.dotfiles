@@ -50,3 +50,7 @@ vim.keymap.set('n', '<leader><S-d>', vim.diagnostic.goto_prev)
 vim.keymap.set('n', '<leader><d>', vim.diagnostic.goto_next)
 vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float)
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist)
+
+-- Harpoon
+vim.keymap.set('n',"<leader>w",  function() require("harpoon.mark").add_file() end, { silent = true })
+vim.keymap.set('n',"<C-e>", function() require("harpoon.ui").toggle_quick_menu() end, { silent = true })
