@@ -16,7 +16,6 @@ local on_attach = function(_, bufnr)
     nmap('<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
     nmap('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
     nmap('K', vim.lsp.buf.hover, 'Hover Documentation')
-    nmap('<C-K>', vim.lsp.buf.signature_help, 'Signature Documentation')
     nmap('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
     nmap('<leader>D', vim.lsp.buf.type_definition, 'Type [D]efinition')
   
@@ -24,11 +23,9 @@ local on_attach = function(_, bufnr)
     vim.api.nvim_buf_create_user_command(bufnr, 'Format', vim.lsp.buf.format or vim.lsp.buf.formatting,
       { desc = 'Format current buffer with LSP' })
   end
-  
-  local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
-  
+    
   -- Langue Servers
-  local servers = { 'clangd', 'rust_analyzer', 'pyright', 'tsserver', 'sumneko_lua' }
+  local servers = { 'clangd', 'rust_analyzer', 'pyright', 'tsserver', 'sumneko_lua', 'julials' }
   
   -- Make sure they are installed
   require('nvim-lsp-installer').setup {
@@ -55,3 +52,5 @@ require('lspconfig')['rust_analyzer'].setup{
       ["rust-analyzer"] = {}
     }
 }
+
+require'lspconfig'.julials.setup{}

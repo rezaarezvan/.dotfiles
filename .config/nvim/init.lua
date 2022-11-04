@@ -1,11 +1,14 @@
-require "packer"
+require "plugins"
+require "theme"
 require "set"
 require "keymap"
-require "theme"
-require "telecope"
-require "lualine"
-require "comment"
 
-local neogit = require('neogit')
-
-neogit.setup {}
+require "plugins.comment"
+require "plugins.telescope"
+require "plugins.lualine"
+require "plugins.blankline"
+require "plugins.gitsigns"
+require "plugins.treesitter"
+require "plugins.LSP"
+require "plugins.CMP"
+require "plugins.DAP"

@@ -3,12 +3,6 @@ vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
 -- Movement
---vim.keymap.set('n', '<C-Left>', 'b', { silent = true })
---vim.keymap.set('n', '<C-Right>', 'w', { silent = true })
---vim.keymap.set('n', '<C-Up>', '5k', { silent = true })
---vim.keymap.set('n', '<C-Down>', '5j', { silent = true })
-
--- Movement
 vim.keymap.set('n', '<C-h>', 'b', { silent = true })
 vim.keymap.set('n', '<C-l>', 'w', { silent = true })
 vim.keymap.set('n', '<C-k>', '5k', { silent = true })
@@ -26,7 +20,6 @@ vim.keymap.set('i', '<Down>', '<nop>', { silent = true })
 vim.keymap.set('i', '<Up>', '<nop>', { silent = true })
 
 -- QoL
-vim.keymap.set('i', '<C-BS>', '<C-w>', { silent = true })
 vim.keymap.set('n', '<C-s>', ':Neoformat<cr>:w<cr>', { silent = true })
 vim.keymap.set('n', '<S-a>', ':tabp<cr>', { silent = true })
 vim.keymap.set('n', '<S-d>', ':tabn<cr>', { silent = true })
