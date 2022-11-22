@@ -9,7 +9,7 @@ return require("packer").startup(function()
   use ( "neovim/nvim-lspconfig"               ) -- Collection of configurations for built-in LSP client
   use ( "hrsh7th/cmp-nvim-lsp"                ) -- Autocompletion
   use ( "hrsh7th/nvim-cmp"                    ) -- Autocompletion
-  use ( "ThePrimeagen/harpoon"                ) 
+  use ( "ThePrimeagen/harpoon"                ) -- HARPOOOOOOOON
   use ( "tpope/vim-fugitive"                  ) -- Git commands in nvim
   use ( "tpope/vim-rhubarb"                   ) -- Fugitive-companion to interact with github
   use ( "lewis6991/gitsigns.nvim"             )  -- Add git related info in the signs columns and popups
@@ -30,18 +30,16 @@ return require("packer").startup(function()
   use ( "nvim-lualine/lualine.nvim"           ) -- Fancier statusline
   use ( "lukas-reineke/indent-blankline.nvim" ) -- Add indentation guides even on blank lines
   use ( "tpope/vim-sleuth"                    ) -- Detect tabstop and shiftwidth automatically
-
   use { 'L3MON4D3/LuaSnip', requires = { 'saadparwaiz1/cmp_luasnip' } } -- Snippet Engine and Snippet Expansion
-
   use ( "nvim-treesitter/nvim-treesitter", {
     run = ":TSUpdate"
   })
-
   use ( "nvim-treesitter/nvim-treesitter-textobjects" ) -- Additional textobjects for treesitter
   
   -- Debugger
   use ( "mfussenegger/nvim-dap" )
   use { "rcarriga/nvim-dap-ui", requires = { "mfussenegger/nvim-dap" } }
   use 'theHamsta/nvim-dap-virtual-text'
+  use 'xiyaowong/nvim-transparent'
 end)
 

@@ -1,13 +1,13 @@
 -- Settings
+
 -- Splits
 vim.o.splitbelow = true
 vim.o.splitright = true
 
+-- Tings
 vim.o.lazyredraw = true
 vim.o.ruler      = true
 vim.o.showcmd    = true
-
--- Tings
 vim.opt.errorbells = false
 vim.opt.tabstop = 4
 vim.opt.softtabstop = 4
@@ -34,7 +34,6 @@ vim.o.breakindent = true
 
 -- Save undo history
 vim.o.swapfile = false
---vim.opt.undodir = os.getenv("HOME") .. "/.vim/undodir"
 vim.opt.undofile = true
 
 -- Case insensitive searching

@@ -19,6 +19,11 @@ vim.keymap.set('i', '<Right>', '<nop>', { silent = true })
 vim.keymap.set('i', '<Down>', '<nop>', { silent = true })
 vim.keymap.set('i', '<Up>', '<nop>', { silent = true })
 
+vim.keymap.set('v', '<Left>', '<nop>', { silent = true })
+vim.keymap.set('v', '<Right>', '<nop>', { silent = true })
+vim.keymap.set('v', '<Down>', '<nop>', { silent = true })
+vim.keymap.set('v', '<Up>', '<nop>', { silent = true })
+
 -- QoL
 vim.keymap.set('n', '<C-s>', ':Neoformat<cr>:w<cr>', { silent = true })
 vim.keymap.set('n', '<S-a>', ':tabp<cr>', { silent = true })
@@ -37,12 +42,6 @@ vim.keymap.set({ 'n', 'v' }, '<Space>', '<Nop>', { silent = true })
 -- Wrapping
 vim.keymap.set('n', 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
 vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
-
--- Diagnostic keymaps
-vim.keymap.set('n', '<leader><S-d>', vim.diagnostic.goto_prev)
-vim.keymap.set('n', '<leader><d>', vim.diagnostic.goto_next)
-vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float)
-vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist)
 
 -- Harpoon
 vim.keymap.set('n',"<leader>w",  function() require("harpoon.mark").add_file() end, { silent = true })

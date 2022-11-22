@@ -59,16 +59,6 @@ set foldlevel=99
 "Enable folding with the spacebar
 nnoremap <space> za
 
-au BufNewFile,BufRead *.py,*.java,*.cpp,*.c,*.cs,*.rkt,*.h,*.html
-    \ set tabstop=4 |
-    \ set softtabstop=4 |
-    \ set shiftwidth=4 |
-    \ set textwidth=120 |
-    \ set expandtab |
-    \ set autoindent |
-    \ set fileformat=unix |
-set encoding=utf-8
-
 syntax on
 highlight Comment cterm=italic gui=italic
 set showtabline=2
@@ -112,33 +102,7 @@ set pastetoggle=<F2> " enable paste mode
 set wildmode=longest,list,full
 set wildmenu 
 
-" Ignore files
-set wildignore+=*.pyc
-set wildignore+=*_build/*
-set wildignore+=**/coverage/*
-set wildignore+=**/node_modules/*
-set wildignore+=**/android/*
-set wildignore+=**/ios/*
-set wildignore+=**/.git/*
-
 set lazyredraw "redraws the screne when it needs to
 set showmatch "highlights matching brackets
 set incsearch "search as characters are entered
 set hlsearch "highlights matching searches
-
-" c++11 support in syntastic
-let g:syntastic_cpp_compiler = 'clang++'
-let g:syntastic_cpp_compiler_options = ' -std=c++11'
-
-" run code
-set noerrorbells visualbell t_vb=
-autocmd GUIEnter * set visualbell t_vb=
-
-augroup compileandrun
-    autocmd!
-    autocmd filetype python nnoremap <f5> :w <bar> :!python3 % <cr>
-    autocmd filetype cpp nnoremap <f5> :w <bar> !g++ -std=c++11 % <cr> :vnew <bar> :te "a.exe" <cr><cr>
-    autocmd filetype cpp nnoremap <f6> :vnew <bar> :te "a.exe" <cr>
-    autocmd filetype c nnoremap <f5> :w <bar> !gcc % && a.exe <cr>
-    autocmd filetype java nnoremap <f5> :w <bar> !javac % && java %:r <cr>
-augroup END
