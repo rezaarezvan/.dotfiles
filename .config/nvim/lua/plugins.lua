@@ -17,16 +17,13 @@ return require("packer").startup(function()
   use ( "williamboman/mason.nvim"             ) -- Automatically install language servers to stdpath
   use ( "williamboman/nvim-lsp-installer"     )
   require("mason").setup()
+
   use("gruvbox-community/gruvbox")
   use("folke/tokyonight.nvim")
+  use {'shaunsingh/oxocarbon.nvim', branch = 'fennel'}
   use({"catppuccin/nvim", as = "catppuccin" })
-  use({
-    'rose-pine/neovim',
-    as = 'rose-pine',
-    config = function()
-        vim.cmd('colorscheme rose-pine')
-    end
-})
+  use({ 'rose-pine/neovim', as = 'rose-pine'})
+  
   use ( "nvim-lualine/lualine.nvim"           ) -- Fancier statusline
   use ( "lukas-reineke/indent-blankline.nvim" ) -- Add indentation guides even on blank lines
   use ( "tpope/vim-sleuth"                    ) -- Detect tabstop and shiftwidth automatically
