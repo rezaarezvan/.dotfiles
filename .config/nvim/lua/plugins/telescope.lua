@@ -8,7 +8,7 @@ local actions = require("telescope.actions")
 -- Telescope
 require('telescope').setup {
     defaults = {
-      file_sorter    = require("telescope.sorters").get_fzy_sorter,
+		  file_sorter    = require("telescope.sorters").get_fzy_sorter,
 		  prompt_prefix  = " >",
 		  color_devicons = true,
 
@@ -18,8 +18,8 @@ require('telescope').setup {
 
       mappings = {
         i = {
-          ['<C-u>'] = false,
-          ['<C-l>'] = actions.send_to_qflist,
+          ['<C-x>'] = false,
+          ['<C-q>'] = actions.send_to_qflist,
         },
       },
     },

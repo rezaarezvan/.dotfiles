@@ -8,6 +8,11 @@ vim.keymap.set('n', '<C-l>', 'w', { silent = true })
 vim.keymap.set('n', '<C-k>', '5k', { silent = true })
 vim.keymap.set('n', '<C-j>', '5j', { silent = true })
 
+vim.keymap.set('v', '<C-h>', 'b', { silent = true })
+vim.keymap.set('v', '<C-l>', 'w', { silent = true })
+vim.keymap.set('v', '<C-k>', '5k', { silent = true })
+vim.keymap.set('v', '<C-j>', '5j', { silent = true })
+
 -- Disable arrow keys
 vim.keymap.set('n', '<Left>', '<nop>', { silent = true })
 vim.keymap.set('n', '<Right>', '<nop>', { silent = true })
