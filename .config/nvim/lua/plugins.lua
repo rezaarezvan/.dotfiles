@@ -40,10 +40,40 @@ return require("packer").startup(function()
   use ( "tpope/vim-sleuth"                    ) -- Detect tabstop and shiftwidth automatically
   use ( "nvim-treesitter/nvim-treesitter", { run = ":TSUpdate" })
   use ( "nvim-treesitter/nvim-treesitter-textobjects" ) -- Additional textobjects for treesitter
+  use("github/copilot.vim")
+  use("zbirenbaum/copilot.lua");
+  use({
+      "zbirenbaum/copilot-cmp",
+      after = { "copilot.lua" },
+      config = function ()
+          require("copilot_cmp").setup()
+      end
+  });
   
   -- Debugger
   use ( "mfussenegger/nvim-dap" )
   use { "rcarriga/nvim-dap-ui", requires = { "mfussenegger/nvim-dap" }}
   use ('theHamsta/nvim-dap-virtual-text')
+  use {
+  'VonHeikemen/lsp-zero.nvim',
+  requires = {
+    -- LSP Support
+    {'neovim/nvim-lspconfig'},
+    {'williamboman/mason.nvim'},
+    {'williamboman/mason-lspconfig.nvim'},
+
+    -- Autocompletion
+    {'hrsh7th/nvim-cmp'},
+    {'hrsh7th/cmp-buffer'},
+    {'hrsh7th/cmp-path'},
+    {'saadparwaiz1/cmp_luasnip'},
+    {'hrsh7th/cmp-nvim-lsp'},
+    {'hrsh7th/cmp-nvim-lua'},
+
+    -- Snippets
+    {'L3MON4D3/LuaSnip'},
+    {'rafamadriz/friendly-snippets'},
+  }
+  }
 end)
 
