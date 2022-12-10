@@ -30,7 +30,7 @@ return require("packer").startup(function()
   -- Color themes
   use ( "gruvbox-community/gruvbox" )
   use ( "folke/tokyonight.nvim" )
-  use {'shaunsingh/oxocarbon.nvim', branch = 'fennel'}
+  use {'nyoom-engineering/oxocarbon.nvim'}
   use ( {"catppuccin/nvim", as = "catppuccin"  })
   use ( { 'rose-pine/neovim', as = 'rose-pine' })
   
