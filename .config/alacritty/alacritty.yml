@@ -42,9 +42,8 @@ colors:
      cyan: '#696966'
      white: '#AFB0AB'
 
-working_directory: C:\Users\Reza\Desktop
-
 window:
+  opacity: 0.7
   dynamic_title: true
   dimensions:
     columns: 150
