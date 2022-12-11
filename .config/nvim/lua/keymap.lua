@@ -7,11 +7,15 @@ vim.keymap.set('n', '<C-h>', 'b', { silent = true })
 vim.keymap.set('n', '<C-l>', 'w', { silent = true })
 vim.keymap.set('n', '<C-k>', '5k', { silent = true })
 vim.keymap.set('n', '<C-j>', '5j', { silent = true })
+vim.keymap.set('n', '<C-d>', '<C-d>zz', { silent = true })
+vim.keymap.set('n', '<C-u>', '<C-u>zz', { silent = true })
 
 vim.keymap.set('v', '<C-h>', 'b', { silent = true })
 vim.keymap.set('v', '<C-l>', 'w', { silent = true })
 vim.keymap.set('v', '<C-k>', '5k', { silent = true })
 vim.keymap.set('v', '<C-j>', '5j', { silent = true })
+vim.keymap.set('v', '<C-d>', '<C-d>zz', { silent = true })
+vim.keymap.set('v', '<C-u>', '<C-u>zz', { silent = true })
 
 -- Disable arrow keys
 vim.keymap.set('n', '<Left>', '<nop>', { silent = true })
