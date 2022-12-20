@@ -1,12 +1,14 @@
 -- Settings
+vim.opt.guicursor = ""
+
 -- Splits
-vim.o.splitbelow = true
-vim.o.splitright = true
+vim.opt.splitbelow = true
+vim.opt.splitright = true
 
 -- Tings
-vim.o.lazyredraw = true
-vim.o.ruler      = true
-vim.o.showcmd    = true
+vim.opt.lazyredraw = true
+vim.opt.ruler      = true
+vim.opt.showcmd    = true
 vim.opt.errorbells = false
 vim.opt.tabstop = 4
 vim.opt.softtabstop = 4
@@ -16,13 +18,17 @@ vim.opt.smartindent = true
 vim.opt.wrap = false
 
 -- Set highlight on search
-vim.o.hlsearch = false
+vim.opt.hlsearch = false
 vim.opt.incsearch = true
+vim.opt.termguicolors = true
+vim.opt.scrolloff = 8
+vim.opt.signcolumn = "yes"
+vim.opt.isfname:append("@-@")
 vim.opt.colorcolumn = "80"
 vim.opt.updatetime = 50
 
 -- Make line numbers default
-vim.wo.number = true
+vim.opt.nu = true
 vim.opt.relativenumber = true
 
 -- Enable mouse mode
@@ -32,7 +38,9 @@ vim.o.mouse = 'a'
 vim.o.breakindent = true
 
 -- Save undo history
-vim.o.swapfile = false
+vim.opt.swapfile = false
+vim.opt.backup = false
+vim.opt.undodir = os.getenv("UserProfile") .. "/.vim/undodir"
 vim.opt.undofile = true
 
 -- Case insensitive searching

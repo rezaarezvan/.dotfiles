@@ -34,7 +34,7 @@ vim.keymap.set('v', '<Down>', '<nop>', { silent = true })
 vim.keymap.set('v', '<Up>', '<nop>', { silent = true })
 
 -- QoL
-vim.keymap.set('n', '<C-s>', ':Neoformat<cr>:w<cr>', { silent = true })
+vim.keymap.set('n', '<C-s>', ':LspZeroFormat<cr>:w<cr>', { silent = true })
 vim.keymap.set('n', '<S-a>', ':tabp<cr>', { silent = true })
 vim.keymap.set('n', '<S-d>', ':tabn<cr>', { silent = true })
 vim.keymap.set('n', '<tab>', '>>', { silent = true })
@@ -45,13 +45,8 @@ vim.keymap.set('n', '<C-z>', 'u', { silent = true })
 vim.keymap.set('v', '<C-x>', 'd', { silent = true })
 vim.keymap.set('n', '<C-v>', 'p', { silent = true })
 vim.keymap.set('v', '<leader>c', 'y', { silent = true })
-
 vim.keymap.set({ 'n', 'v' }, '<Space>', '<Nop>', { silent = true })
 
 -- Wrapping
 vim.keymap.set('n', 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
 vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
-
--- Harpoon
-vim.keymap.set('n',"<leader>w",  function() require("harpoon.mark").add_file() end, { silent = true })
-vim.keymap.set('n',"<C-e>", function() require("harpoon.ui").toggle_quick_menu() end, { silent = true })
