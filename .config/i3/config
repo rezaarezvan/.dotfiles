@@ -189,9 +189,11 @@ exec_always --no-startup-id picom &
 
 exec --no-startup-id picom -CGb
 
-exec nitrogen --set-auto /home/reza/Pictures/Oma.jpeg --head=0
+exec ~/background.sh
 
-exec ~/Desktop/Test.sh
+exec xrandr --output HDMI-0 --off --output DP-0 --off --output DP-1 --off --output DP-2 --refresh 144 --mode 1920x1080 --pos 0x0 --rotate left --output DP-3 --off --output DP-4 --primary --refresh 390 --mode 1920x1080 --pos 1080x0 --rotate normal --output DP-5 --off
+exec nitrogen --set-auto /home/reza/Pictures/onlyfans.png --head=0 --save
+exec nitrogen --set-auto /home/reza/Pictures/onlyfans.png --head=1 --save
 
 bindsym Print exec --no-startup-id maim "/home/$USER/Pictures/$(date)"
 
