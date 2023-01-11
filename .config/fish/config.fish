@@ -3,4 +3,4 @@ if status is-interactive
 end
 
 tmux
-cd ~/Desktop
+cd ~
