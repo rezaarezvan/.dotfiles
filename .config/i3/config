@@ -203,6 +203,7 @@ exec alacritty
 exec firefox
 exec discord
 exec spotify
+exec flameshot
 
 assign [class="alacritty"] 1
 assign [class="firefox"] 2
