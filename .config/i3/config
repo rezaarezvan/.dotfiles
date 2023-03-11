@@ -189,9 +189,9 @@ exec_always --no-startup-id picom &
 
 exec --no-startup-id picom -CGb
 
-exec ~/background.sh
+exec ~/Code/Misc/background.sh
 
-exec xrandr --output HDMI-0 --off --output DP-0 --off --output DP-1 --off --output DP-2 --refresh 144 --mode 1920x1080 --pos 0x0 --rotate left --output DP-3 --off --output DP-4 --primary --refresh 390 --mode 1920x1080 --pos 1080x0 --rotate normal --output DP-5 --off
+exec xrandr --output DP-4 --primary --refresh 390 --mode 1920x1080 --pos 1080x0 --rotate normal
 exec nitrogen --set-auto /home/reza/Pictures/onlyfans.png --head=0 --save
 exec nitrogen --set-auto /home/reza/Pictures/onlyfans.png --head=1 --save
 
@@ -199,12 +199,19 @@ bindsym Print exec --no-startup-id maim "/home/$USER/Pictures/$(date)"
 
 exec nvidia-settings -a "DigitalVibrance=1023"
 
-exec --no-startup-id i3-msg 'workspace 1; exec alacritty; workspace 1'
+exec alacritty
+exec firefox
+exec discord
+exec spotify
 
-exec --no-startup-id i3-msg 'workspace 2; exec firefox; workspace 1'
+assign [class="alacritty"] 1
+assign [class="firefox"] 2
+assign [class="discord"] 3
+assign [class="Spotify"] 4
 
-exec --no-startup-id i3-msg 'workspace 3; exec discord; workspace 1'
-
-exec --no-startup-id i3-msg 'workspace 4; exec spotify; workspace 1'
+for_window [class="alacritty"] move to workspace 1
+for_window [class="firefox"] move to workspace 2
+for_window [class="discord"] move to workspace 3
+for_window [class="^Spotify"] move to workspace 4
 
 for_window [class="^.*"] border pixel 0
