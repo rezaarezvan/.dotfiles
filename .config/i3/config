@@ -191,7 +191,7 @@ exec --no-startup-id picom -CGb
 
 exec ~/Code/Misc/background.sh
 
-exec xrandr --output DP-4 --primary --refresh 390 --mode 1920x1080 --pos 1080x0 --rotate normal
+exec xrandr --output DP-0 --primary --refresh 390 --mode 1920x1080 --pos 1080x0 --rotate normal
 exec nitrogen --set-auto /home/reza/Pictures/onlyfans.png --head=0 --save
 exec nitrogen --set-auto /home/reza/Pictures/onlyfans.png --head=1 --save
 
