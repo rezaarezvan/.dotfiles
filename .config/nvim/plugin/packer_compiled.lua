@@ -164,6 +164,11 @@ _G.packer_plugins = {
     path = "/home/reza/.local/share/nvim/site/pack/packer/start/mason.nvim",
     url = "https://github.com/williamboman/mason.nvim"
   },
+  ["nightfox.nvim"] = {
+    loaded = true,
+    path = "/home/reza/.local/share/nvim/site/pack/packer/start/nightfox.nvim",
+    url = "https://github.com/EdenEast/nightfox.nvim"
+  },
   nvim = {
     loaded = true,
     path = "/home/reza/.local/share/nvim/site/pack/packer/start/nvim",
@@ -239,6 +244,11 @@ _G.packer_plugins = {
     loaded = true,
     path = "/home/reza/.local/share/nvim/site/pack/packer/start/undotree",
     url = "https://github.com/mbbill/undotree"
+  },
+  ["vim-enfocado"] = {
+    loaded = true,
+    path = "/home/reza/.local/share/nvim/site/pack/packer/start/vim-enfocado",
+    url = "https://github.com/wuelnerdotexe/vim-enfocado"
   },
   ["vim-fugitive"] = {
     loaded = true,

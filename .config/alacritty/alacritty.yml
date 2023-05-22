@@ -1,46 +1,21 @@
 font:
   normal:
-    family: Hack
+    family: Hack Nerd Font
     style: Bold
 
   bold:
-    family: Hack
+    family: Hack Nerd Font
     style: Bold
 
   italic:
-    family: Hack
+    family: Hack Nerd Font
     style: Italic
 
   bold_italic:
-    family: Hack
+    family: Hack Nerd Font
     style: Bold Italic
 
   size: 12
-
-colors:
-   primary:
-     background: '#0a0a0a'
-     foreground: '#B8B9B4'
-
-   normal:
-     black: '#0A0A0A'
-     red: '#939490'
-     green: '#5E6E5C'
-     yellow: '#B6B8B3'
-     blue: '#727370'
-     magenta: '#D1D1CB'
-     cyan: '#636361'
-     white: '#AAABA6'
-
-   bright:
-     black: '#2E2E2C'
-     red: '#989995'
-     green: '#636361'
-     yellow: '#BBBDB8'
-     blue: '#777875'
-     magenta: '#D6D6D0'
-     cyan: '#696966'
-     white: '#AFB0AB'
 
 window:
   opacity: 0.7
@@ -52,7 +27,7 @@ window:
   padding:
     x: 15
     y: 20
-    
+
 mouse:
   hide_when_typing: true
 
@@ -60,5 +35,35 @@ mouse_bindings:
   - { mouse: Middle, action: PasteSelection }
 
 key_bindings:
-- { key: Q,        mods: Control,       action: Quit                         }
-- { key: N,        mods: Control,       action: SpawnNewInstance             }
+  - { key: Q, mods: Control, action: Quit }
+  - { key: N, mods: Control, action: SpawnNewInstance }
+
+colors:
+  primary:
+    background: '#0a0a0a'
+    foreground: '#ffffff'
+  search:
+    matches:
+      foreground: CellBackground
+      background: '#ee5396'
+    footer_bar:
+      background: '#262626'
+      foreground: '#ffffff'
+  normal:
+    black: "#262626"
+    magenta: "#ff7eb6"
+    green: "#42be65"
+    yellow: "#ffe97b"
+    blue: "#33b1ff"
+    red: "#ee5396"
+    cyan: "#3ddbd9"
+    white: "#dde1e6"
+  bright:
+    black: "#393939"
+    magenta: "#ff7eb6"
+    green: "#42be65"
+    yellow: "#ffe97b"
+    blue: "#33b1ff"
+    red: "#ee5396"
+    cyan: "#3ddbd9"
+    white: "#ffffff"

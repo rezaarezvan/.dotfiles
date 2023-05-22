@@ -24,10 +24,10 @@ require('telescope').setup {
       },
     },
   }
-  
+
   -- Enable telescope
   pcall(require('telescope').load_extension, 'fzf')
-  
+
   -- Keymaps for telescope
   vim.keymap.set('n', '<leader>p', require('telescope.builtin').oldfiles, { desc = '[?] Find recently opened files' })
   vim.keymap.set('n', '<leader><space>', require('telescope.builtin').buffers, { desc = '[ ] Find existing buffers' })
@@ -37,7 +37,7 @@ require('telescope').setup {
       previewer = false,
     })
   end, { desc = '[/] Fuzzily search in current buffer]' })
-  
+
   vim.keymap.set('n', '<leader>sf', require('telescope.builtin').find_files, { desc = '[S]earch [F]iles' })
   vim.keymap.set('n', '<leader>sh', require('telescope.builtin').help_tags, { desc = '[S]earch [H]elp' })
   vim.keymap.set('n', '<leader>sw', require('telescope.builtin').grep_string, { desc = '[S]earch current [W]ord' })
