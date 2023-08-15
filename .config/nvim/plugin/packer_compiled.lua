@@ -230,6 +230,11 @@ _G.packer_plugins = {
     path = "/home/reza/.local/share/nvim/site/pack/packer/start/rose-pine",
     url = "https://github.com/rose-pine/neovim"
   },
+  ["starry_night.nvim"] = {
+    loaded = true,
+    path = "/home/reza/.local/share/nvim/site/pack/packer/start/starry_night.nvim",
+    url = "https://github.com/TheMidnightShow/starry_night.nvim"
+  },
   ["telescope.nvim"] = {
     loaded = true,
     path = "/home/reza/.local/share/nvim/site/pack/packer/start/telescope.nvim",
