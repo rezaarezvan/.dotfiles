@@ -1,39 +1,38 @@
-return require("packer").startup(function(use)
-    use("wbthomason/packer.nvim")
-    use {
-        'nvim-telescope/telescope.nvim', tag = '0.1.x',
-        requires = { { 'nvim-lua/plenary.nvim' } }
-    }
-
-    use({ "nvim-treesitter/nvim-treesitter", run = ":TSUpdate" })
-    use("nvim-treesitter/playground")
-    use("ThePrimeagen/harpoon")
-    use('mbbill/undotree')
-    use("tpope/vim-fugitive")
-    use("lewis6991/gitsigns.nvim")
-    use("numToStr/Comment.nvim")
-
-    -- Color themes
-    use("gruvbox-community/gruvbox")
-    use("folke/tokyonight.nvim")
-    use("nyoom-engineering/oxocarbon.nvim")
-    use({ "catppuccin/nvim", as = "catppuccin" })
-    use({
-        'rose-pine/neovim',
-        as = 'rose-pine',
-        config = function()
-            vim.cmd('colorscheme rose-pine')
-        end
+local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+if not vim.loop.fs_stat(lazypath) then
+    vim.fn.system({
+        "git",
+        "clone",
+        "--filter=blob:none",
+        "https://github.com/folke/lazy.nvim.git",
+        "--branch=stable", -- latest stable release
+        lazypath,
     })
-    use("NavigationHazard/base16-vim")
-    use("Everblush/nvim")
-    use("EdenEast/nightfox.nvim")
-    use("wuelnerdotexe/vim-enfocado")
+end
+vim.opt.rtp:prepend(lazypath)
+
+return require("lazy").setup({
+    {
+        'nvim-telescope/telescope.nvim',
+        tag = '0.1.x',
+        dependencies = { { 'nvim-lua/plenary.nvim' } }
+    },
+
+    { "nvim-treesitter/nvim-treesitter", build = ":TSUpdate" },
+    "nvim-treesitter/playground",
+    "ThePrimeagen/harpoon",
+    'mbbill/undotree',
+    "tpope/vim-fugitive",
+    "lewis6991/gitsigns.nvim",
+    "numToStr/Comment.nvim",
+
+    -- Color theme
+    "nyoom-engineering/oxocarbon.nvim",
 
     -- LSP
-    use {
+    {
         'VonHeikemen/lsp-zero.nvim',
-        requires = {
+        dependencies = {
             -- LSP Support
             { 'neovim/nvim-lspconfig' },
             { 'williamboman/mason.nvim' },
@@ -51,14 +50,14 @@ return require("packer").startup(function(use)
             { 'L3MON4D3/LuaSnip' },
             { 'rafamadriz/friendly-snippets' },
         }
-    }
+    },
 
     -- Misc
-    use("nvim-lualine/lualine.nvim")
-    use("github/copilot.vim")
+    "nvim-lualine/lualine.nvim",
+    "github/copilot.vim",
 
     -- Debugger
-    use("mfussenegger/nvim-dap")
-    use { "rcarriga/nvim-dap-ui", requires = { "mfussenegger/nvim-dap" } }
-    use("theHamsta/nvim-dap-virtual-text")
-end)
+    "mfussenegger/nvim-dap",
+    { "rcarriga/nvim-dap-ui", dependencies = { "mfussenegger/nvim-dap" } },
+    "theHamsta/nvim-dap-virtual-text",
+})
