@@ -1,6 +1,6 @@
 function ColorDeez(color)
     vim.opt.background = "dark"
-    color = color or "oxocarbon"
+    color = color or "biscuit"
     vim.cmd.colorscheme(color)
 
     vim.api.nvim_set_hl(0, "Normal", { bg = "none" })

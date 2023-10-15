@@ -1,5 +1,5 @@
-require("rezvan.packer")
 require("rezvan.remap")
+require("rezvan.packer")
 require("rezvan.set")
 
 local augroup = vim.api.nvim_create_augroup

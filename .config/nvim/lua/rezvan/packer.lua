@@ -14,7 +14,7 @@ vim.opt.rtp:prepend(lazypath)
 return require("lazy").setup({
     {
         'nvim-telescope/telescope.nvim',
-        tag = '0.1.x',
+        branch = '0.1.x',
         dependencies = { { 'nvim-lua/plenary.nvim' } }
     },
 
@@ -28,7 +28,7 @@ return require("lazy").setup({
 
     -- Color theme
     "nyoom-engineering/oxocarbon.nvim",
-
+    "rezaarezvan/biscuit.nvim",
     -- LSP
     {
         'VonHeikemen/lsp-zero.nvim',
@@ -58,6 +58,6 @@ return require("lazy").setup({
 
     -- Debugger
     "mfussenegger/nvim-dap",
-    { "rcarriga/nvim-dap-ui", dependencies = { "mfussenegger/nvim-dap" } },
+    { "rcarriga/nvim-dap-ui",            dependencies = { "mfussenegger/nvim-dap" } },
     "theHamsta/nvim-dap-virtual-text",
 })
