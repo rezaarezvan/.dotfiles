@@ -20,7 +20,11 @@ return require("lazy").setup({
 
     { "nvim-treesitter/nvim-treesitter", build = ":TSUpdate" },
     "nvim-treesitter/playground",
-    "ThePrimeagen/harpoon",
+    {
+        "ThePrimeagen/harpoon",
+        branch = "harpoon2",
+        dependencies = { { "nvim-lua/plenary.nvim" } }
+    },
     'mbbill/undotree',
     "tpope/vim-fugitive",
     "lewis6991/gitsigns.nvim",
