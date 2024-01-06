@@ -1,5 +1,5 @@
 require("rezvan.remap")
-require("rezvan.packer")
+require("rezvan.lazy")
 require("rezvan.set")
 
 local augroup = vim.api.nvim_create_augroup
@@ -23,7 +23,7 @@ autocmd('TextYankPost', {
     end,
 })
 
-autocmd({"BufWritePre"}, {
+autocmd({ "BufWritePre" }, {
     group = ThePrimeagenGroup,
     pattern = "*",
     command = [[%s/\s\+$//e]],
