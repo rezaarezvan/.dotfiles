@@ -1,4 +1,10 @@
 #!/bin/sh
 # feh --no-fehbg --bg-scale '/home/reza/Pictures/_pic/Wallpapers/onlyfans.png'
 # feh --no-fehbg --bg-scale '/home/reza/Pictures/_pic/Wallpapers/1683557859136790.png'
-feh --no-fehbg --bg-scale '/home/reza/Pictures/_pic/Wallpapers/profile3.jpg'
+# feh --no-fehbg --bg-scale '/home/reza/Pictures/_pic/Wallpapers/profile3.jpg'
+# feh --no-fehbg --bg-scale '/home/reza/Pictures/Wallpapers/image2.png'
+# feh --no-fehbg --bg-scale '/home/reza/Pictures/Wallpapers/blyss.jpg'
+# feh --no-fehbg --bg-scale '/home/reza/Pictures/Wallpapers/lol.png'
+feh --no-fehbg --bg-scale '/home/reza/Pictures/Wallpapers/cat.jpeg'
+# feh --no-fehbg --bg-center '/home/reza/Downloads/Snapchat-1472919011.jpg'
+# feh --no-fehbg --bg-scale '/home/reza/Downloads/438-4382374_view-1523035312122-anime-girl-kill-yourself.png'
