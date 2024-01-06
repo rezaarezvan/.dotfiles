@@ -15,3 +15,4 @@ end
 # <<< conda initialize <<<
 
 set -x LD_LIBRARY_PATH /usr/lib/cuda/lib64 $LD_LIBRARY_PATH
+set PATH $PATH ~/bin

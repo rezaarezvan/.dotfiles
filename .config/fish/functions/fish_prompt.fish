@@ -1,1 +1,1 @@
-/Users/reza/.local/share/omf/themes/zeit/fish_prompt.fish
+/home/reza/.local/share/omf/themes/anchor/fish_prompt.fish
