@@ -8,8 +8,6 @@ red = "#e3556f"
 white = "#ffe9c7"
 yellow = "#edbf86"
 
-# The colors of the terminal
-
 [colors.normal]
 black = "#2d2424"
 blue = "#949f6b"
