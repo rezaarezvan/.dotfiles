@@ -1,1 +1,112 @@
-.config/alacritty/alacritty.yml
+font:
+  normal:
+    family: Hack Nerd Font
+    style: Bold
+
+  bold:
+    family: Hack Nerd Font
+    style: Bold
+
+  italic:
+    family: Hack Nerd Font
+    style: Italic
+
+  bold_italic:
+    family: Hack Nerd Font
+    style: Bold Italic
+
+  size: 12
+
+window:
+  opacity: 0.95
+  dynamic_title: true
+  dimensions:
+    columns: 150
+    lines: 36
+
+  padding:
+    x: 15
+    y: 20
+
+mouse:
+  hide_when_typing: true
+
+mouse_bindings:
+  - { mouse: Middle, action: PasteSelection }
+
+key_bindings:
+  - { key: Q, mods: Control, action: Quit }
+  - { key: N, mods: Control, action: SpawnNewInstance }
+
+# Biscuit
+
+colors:
+  primary:
+    background: '#1a1515'
+    foreground: '#ffe9c7'
+  normal:
+    black: '#2d2424'
+    red: '#cf2241'
+    green: '#f07942'
+    yellow: '#e39c45'
+    blue: '#949f6b'
+    magenta: '#716c97'
+    cyan: '#ae3f8a'
+    white: '#9c8181'
+  bright:
+    black: '#725a5a'
+    red: '#e3556f'
+    green: '#f49d75'
+    yellow: '#edbf86'
+    blue: '#b0b893'
+    magenta: '#9894b3'
+    cyan: '#ca6bac'
+    white: '#ffe9c7'
+
+# Own theme
+
+# colors:
+#   primary:
+#     background: '#080404'
+#     foreground: '#D9C2C2'
+#   normal:
+#     black: '#1A1212'
+#     red: '#BF1A2E'
+#     green: '#D38C35'
+#     yellow: '#E06232'
+#     blue: '#798459'
+#     magenta: '#5F2D5C'
+#     cyan: '#8E3962'
+#     white: '#5E4E4E'
+#   bright:
+#     black: '#2C1E1E'
+#     red: '#BF1A2E'
+#     green: '#D38C35'
+#     yellow: '#E06232'
+#     blue: '#798459'
+#     magenta: '#5F2D5C'
+#     cyan: '#8E3962'
+#     white: '#D9C2C2'
+
+# colors:
+#   primary:
+#     background: '#050303'  # Darkened for contrast
+#     foreground: '#E0C3C3'  # Brightened for readability
+#   normal:
+#     black: '#1A1212'
+#     red: '#CF1025'  # Brightened for distinction
+#     green: '#E09F36'  # Brightened for distinction
+#     yellow: '#F07B32'  # Brightened for distinction
+#     blue: '#89A46B'  # Brightened for distinction
+#     magenta: '#752D7C'  # Brightened for distinction
+#     cyan: '#A33972'  # Brightened for distinction
+#     white: '#6F5656'
+#   bright:
+#     black: '#2C1E1E'
+#     red: '#CF1025'  # Brightened for distinction
+#     green: '#E09F36'  # Brightened for distinction
+#     yellow: '#F07B32'  # Brightened for distinction
+#     blue: '#89A46B'  # Brightened for distinction
+#     magenta: '#752D7C'  # Brightened for distinction
+#     cyan: '#A33972'  # Brightened for distinction
+#     white: '#E0C3C3'  # Brightened for readability
