@@ -3,7 +3,7 @@ require("rezvan.lazy")
 require("rezvan.set")
 
 local augroup = vim.api.nvim_create_augroup
-local ThePrimeagenGroup = augroup('ThePrimeagen', {})
+local RezvanGroup = augroup('rezvan', {})
 
 local autocmd = vim.api.nvim_create_autocmd
 local yank_group = augroup('HighlightYank', {})
@@ -24,7 +24,7 @@ autocmd('TextYankPost', {
 })
 
 autocmd({ "BufWritePre" }, {
-    group = ThePrimeagenGroup,
+    group = RezvanGroup,
     pattern = "*",
     command = [[%s/\s\+$//e]],
 })
