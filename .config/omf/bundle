@@ -1,3 +1,5 @@
+package foreign-env
+package nvm
 package vcs
 theme default
 theme fisk
