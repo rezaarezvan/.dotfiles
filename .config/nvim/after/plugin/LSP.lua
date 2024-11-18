@@ -28,6 +28,7 @@ require('mason-lspconfig').setup({
 })
 
 local cmp = require('cmp')
+local ls = require('luasnip')
 local cmp_select = { behavior = cmp.SelectBehavior.Select }
 
 cmp.setup({
@@ -38,13 +39,19 @@ cmp.setup({
         { name = 'luasnip', keyword_length = 2 },
         { name = 'buffer',  keyword_length = 3 },
     },
-    formatting = lsp_zero.cmp_format(),
+    formatting = require('lsp-zero').cmp_format(),
     mapping = cmp.mapping.preset.insert({
         ['<CR>'] = cmp.mapping.confirm({ select = false }),
         ['<C-Space>'] = cmp.mapping.complete(),
         ['<C-u>'] = cmp.mapping.scroll_docs(-4),
         ['<C-d>'] = cmp.mapping.scroll_docs(4),
-        ['Tab'] = nil,
+        ['<Tab>'] = cmp.mapping(function(fallback)
+            if ls.expandable() then
+                ls.expand()
+            else
+                fallback()
+            end
+        end),
         ['<S-Tab>'] = nil,
     }),
 })
