@@ -43,11 +43,11 @@ return require("lazy").setup({
 
     -- Color theme
     { "nyoom-engineering/oxocarbon.nvim" },
-    { "https://github.com/Biscuit-Colorscheme/nvim" },
+    { "Biscuit-Colorscheme/nvim" },
     -- -- LSP
     {
         "VonHeikemen/lsp-zero.nvim",
-        branch = 'v3.x'
+        branch = 'v4.x'
     },
 
     -- LSP Support
@@ -58,25 +58,27 @@ return require("lazy").setup({
     -- Autocompletion
     { "hrsh7th/nvim-cmp" },
     { "hrsh7th/cmp-nvim-lsp" },
-    { "L3MON4D3/LuaSnip" },
+    {
+        "L3MON4D3/LuaSnip",
+        version = "2.*",
+        build = "make install_jsregexp",
+        config = function()
+            local ls = require 'luasnip'
+            ls.setup({ enable_autosnippets = true })
+        end
+    },
+    {
+        "iurimateus/luasnip-latex-snippets.nvim",
+        requires = { "L3MON4D3/LuaSnip", "lervag/vimtex" },
+        config = function()
+            require 'luasnip-latex-snippets'.setup({ use_treesitter = true })
+            require("luasnip").config.setup({ enable_autosnippets = true })
+        end,
+    },
 
     -- Misc
     { "nvim-lualine/lualine.nvim" },
     { "github/copilot.vim" },
-    {
-        {
-            "CopilotC-Nvim/CopilotChat.nvim",
-            branch = "canary",
-            dependencies = {
-                { "github/copilot.vim" },
-                { "nvim-lua/plenary.nvim" },
-            },
-            build = "make tiktoken",
-            opts = {
-                debug = true,
-            },
-        },
-    },
 
     -- Debugger
     { "mfussenegger/nvim-dap" },

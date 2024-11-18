@@ -62,9 +62,9 @@ mouse = "Middle"
 dynamic_title = true
 opacity = 0.95
 
-[window.dimensions]
-columns = 150
-lines = 36
+# [window.dimensions]
+# columns = 150
+# lines = 36
 
 [window.padding]
 x = 15

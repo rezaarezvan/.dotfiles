@@ -1,7 +1,6 @@
 require("rezvan.remap")
 require("rezvan.lazy")
 require("rezvan.set")
-require("rezvan.neuralogue")
 
 vim.cmd([[command! OpenChat lua require('rezvan.neuralogue').open_chat()]])
 
