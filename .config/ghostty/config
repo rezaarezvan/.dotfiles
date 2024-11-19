@@ -1,0 +1,35 @@
+background = #1a1515
+foreground = #ffe9c7
+palette = 0=#2d2424
+palette = 1=#cf2241
+palette = 2=#f07942
+palette = 3=#e39c45
+palette = 4=#949f6b
+palette = 5=#716c97
+palette = 6=#ae3f8a
+palette = 7=#9c8181
+palette = 8=#725a5a
+palette = 9=#e3556f
+palette = 10=#f49d75
+palette = 11=#edbf86
+palette = 12=#b0b893
+palette = 13=#9894b3
+palette = 14=#ca6bac
+palette = 15=#ffe9c7
+
+font-family = "Hack Nerd Font"
+font-style = "Bold"
+font-size = 12
+
+keybind = ctrl+q=quit
+keybind = ctrl+n=new_window
+
+mouse-hide-while-typing = true
+
+background-opacity = 0.95
+window-padding-x = 15
+window-padding-y = 20
+
+window-title-font-family = "Hack Nerd Font"
+window-height = 36
+window-width = 150
