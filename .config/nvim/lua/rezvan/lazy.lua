@@ -40,6 +40,14 @@ return require("lazy").setup({
     { "tpope/vim-fugitive" },
     { "lewis6991/gitsigns.nvim" },
     { "numToStr/Comment.nvim" },
+    {
+        "lervag/vimtex",
+        lazy = false,
+        init = function()
+            vim.g.vimtex_view_method = "sioyek"
+            vim.g.vimtex_compiler_method = "tectonic"
+        end
+    },
 
     -- Color theme
     { "nyoom-engineering/oxocarbon.nvim" },
@@ -63,15 +71,15 @@ return require("lazy").setup({
         version = "2.*",
         build = "make install_jsregexp",
         config = function()
-            local ls = require 'luasnip'
-            ls.setup({ enable_autosnippets = true })
+            require("luasnip").setup({ enable_autosnippets = true })
+            -- require("rezvan.snippets").setup()
         end
     },
     {
         "iurimateus/luasnip-latex-snippets.nvim",
-        requires = { "L3MON4D3/LuaSnip", "lervag/vimtex" },
+        requires = { "L3MON4D3/LuaSnip" },
         config = function()
-            require 'luasnip-latex-snippets'.setup({ use_treesitter = true })
+            require("luasnip-latex-snippets").setup({ use_treesitter = true })
             require("luasnip").config.setup({ enable_autosnippets = true })
         end,
     },
