@@ -72,16 +72,8 @@ return require("lazy").setup({
         build = "make install_jsregexp",
         config = function()
             require("luasnip").setup({ enable_autosnippets = true })
-            -- require("rezvan.snippets").setup()
+            require("rezvan.snippets").setup()
         end
-    },
-    {
-        "iurimateus/luasnip-latex-snippets.nvim",
-        requires = { "L3MON4D3/LuaSnip" },
-        config = function()
-            require("luasnip-latex-snippets").setup({ use_treesitter = true })
-            require("luasnip").config.setup({ enable_autosnippets = true })
-        end,
     },
 
     -- Misc
