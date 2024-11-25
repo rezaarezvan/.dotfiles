@@ -11,3 +11,6 @@ git clone https://github.com/rezaarezvan/.dotfiles
 cd .dotfiles
 stow .
 ```
+
+# snippets
+my nvim snippets are based on [luasnip-latex-snippets.nvim](https://github.com/iurimateus/luasnip-latex-snippets.nvim)

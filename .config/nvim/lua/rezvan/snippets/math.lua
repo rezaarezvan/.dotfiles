@@ -84,8 +84,8 @@ function M.retrieve(is_math)
         with_priority({ trig = "hat", name = "hat" }, "\\hat{$1}$0"),
         with_priority({ trig = "bar", name = "bar" }, "\\bar{$1}$0"),
 
-        parse_snippet({ trig = "inf", name = "\\infty" }, "\\infty"),
-        parse_snippet({ trig = "in", name = "in" }, "\\in "),
+        parse_snippet({ trig = "infty", name = "\\infty" }, "\\infty"),
+        -- parse_snippet({ trig = "in", name = "in" }, "\\in "),
         parse_snippet({ trig = "notin", name = "not in " }, "\\not\\in "),
 
         parse_snippet({ trig = "sum", name = "sum" }, "\\sum_{i=1}^N $0"),
@@ -152,7 +152,7 @@ function M.retrieve(is_math)
         parse_snippet({ trig = "mapsto", name = "mapsto" }, "\\mapsto "),
         parse_snippet({ trig = "nabla", name = "nabla" }, "\\nabla "),
         parse_snippet({ trig = "mathcal", name = "mathcal" }, "\\mathcal{$1}$0"),
-        parse_snippet({ trig = "//", name = "Fraction" }, "\\frac{$1}{$2}$0"),
+        parse_snippet({ trig = "frac", name = "Fraction" }, "\\frac{$1}{$2}$0"),
         parse_snippet({ trig = "to", name = "to", priority = 100 }, "\\to "),
 
         parse_snippet({ trig = "_text", name = "text subscript" }, "_\\text{$1} $0"),
@@ -170,17 +170,24 @@ function M.retrieve(is_math)
             "\\begin{pmatrix} $1 & \\cdots & $2 \\end{pmatrix}"
         ),
 
+        parse_snippet({ trig = "mathbf", name = "mathbf" }, "\\mathbf{$1}$0"),
+        parse_snippet({ trig = "mathcal", name = "mathcal" }, "\\mathcal{$1}$0"),
+        parse_snippet({ trig = "mathbb", name = "mathbb" }, "\\mathbb{$1}$0"),
         parse_snippet({ trig = "RR", name = "R" }, "\\mathbb{R}"),
         parse_snippet({ trig = "DD", name = "D" }, "\\mathcal{D}"),
         parse_snippet({ trig = "EE", name = "Expectation" }, "\\mathbb{E}"),
         parse_snippet({ trig = "ell", name = "l" }, "\\ell"),
 
+
         parse_snippet({ trig = "__", name = "subscript" }, "_{$1}$0"),
         parse_snippet({ trig = "^^", name = "superscript" }, "^{$1}$0"),
         parse_snippet({ trig = "neq", name = "not equals" }, "\\neq "),
-        parse_snippet({ trig = "leq", name = "leq" }, "\\le "),
-        parse_snippet({ trig = "geq", name = "geq" }, "\\ge "),
+        parse_snippet({ trig = "leq", name = "leq" }, "\\leq "),
+        parse_snippet({ trig = "geq", name = "geq" }, "\\geq "),
         parse_snippet({ trig = "sim", name = "~" }, "\\sim "),
+
+        parse_snippet({ trig = "align", name = "align" }, "\\begin{align*} \n$1 \n\\end{align*} $0"),
+        parse_snippet({ trig = "cases", name = "cases" }, "\\begin{cases} \n$1 \n\\end{cases} $0"),
     })
 
 
