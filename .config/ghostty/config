@@ -17,8 +17,7 @@ palette = 13=#9894b3
 palette = 14=#ca6bac
 palette = 15=#ffe9c7
 
-font-family = "Hack Nerd Font"
-font-style = "Bold"
+font-family = "Departure Mono"
 font-size = 12
 
 keybind = ctrl+q=quit
@@ -30,6 +29,6 @@ background-opacity = 0.95
 window-padding-x = 15
 window-padding-y = 20
 
-window-title-font-family = "Hack Nerd Font"
+window-title-font-family = "Departure Mono"
 window-height = 36
 window-width = 150
