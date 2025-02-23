@@ -26,19 +26,19 @@ foreground = "#ffe9c7"
 size = 12
 
 [font.bold]
-family = "Hack Nerd Font"
+family = "Departure Mono"
 style = "Bold"
 
 [font.bold_italic]
-family = "Hack Nerd Font"
+family = "Departure Mono"
 style = "Bold Italic"
 
 [font.italic]
-family = "Hack Nerd Font"
+family = "Departure Mono"
 style = "Italic"
 
 [font.normal]
-family = "Hack Nerd Font"
+family = "Departure Mono"
 style = "Bold"
 
 [[keyboard.bindings]]
