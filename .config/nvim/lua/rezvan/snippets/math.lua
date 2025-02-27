@@ -85,7 +85,7 @@ function M.retrieve(is_math)
         with_priority({ trig = "bar", name = "bar" }, "\\bar{$1}$0"),
 
         parse_snippet({ trig = "infty", name = "\\infty" }, "\\infty"),
-        -- parse_snippet({ trig = "in", name = "in" }, "\\in "),
+        parse_snippet({ trig = "iin", name = "in" }, "\\in "),
         parse_snippet({ trig = "notin", name = "not in " }, "\\not\\in "),
 
         parse_snippet({ trig = "sum", name = "sum" }, "\\sum_{i=1}^N $0"),
@@ -149,7 +149,7 @@ function M.retrieve(is_math)
         parse_snippet({ trig = "vdots", name = "vdots", priority = 100 }, "\\vdots "),
         parse_snippet({ trig = "cdots", name = "cdots", priority = 100 }, "\\cdots "),
         parse_snippet({ trig = "ddots", name = "ddots", priority = 100 }, "\\ddots "),
-        parse_snippet({ trig = "mapsto", name = "mapsto" }, "\\mapsto "),
+        parse_snippet({ trig = "maps", name = "maps" }, "\\mapsto "),
         parse_snippet({ trig = "nabla", name = "nabla" }, "\\nabla "),
         parse_snippet({ trig = "mathcal", name = "mathcal" }, "\\mathcal{$1}$0"),
         parse_snippet({ trig = "frac", name = "Fraction" }, "\\frac{$1}{$2}$0"),
@@ -188,6 +188,7 @@ function M.retrieve(is_math)
 
         parse_snippet({ trig = "align", name = "align" }, "\\begin{align*} \n$1 \n\\end{align*} $0"),
         parse_snippet({ trig = "cases", name = "cases" }, "\\begin{cases} \n$1 \n\\end{cases} $0"),
+        parse_snippet({ trig = "equation", name = "equation" }, "\\begin{equation} \n$1 \n\\end{equation} $0"),
     })
 
 

@@ -23,8 +23,6 @@ return require("lazy").setup({
         dependencies = { "nvim-lua/plenary.nvim" }
     },
 
-    { "nvim-treesitter/playground" },
-
     {
         "nvim-treesitter/nvim-treesitter",
         build = ":TSUpdate"
@@ -33,7 +31,7 @@ return require("lazy").setup({
     {
         "ThePrimeagen/harpoon",
         branch = "harpoon2",
-        dependencies = { { "nvim-lua/plenary.nvim" } }
+        dependencies = { "nvim-lua/plenary.nvim" }
     },
 
     { "mbbill/undotree" },
@@ -49,16 +47,14 @@ return require("lazy").setup({
         end
     },
 
-    -- Color theme
+    -- Color theme(s)
     { "nyoom-engineering/oxocarbon.nvim" },
     { "Biscuit-Colorscheme/nvim" },
-    -- -- LSP
     {
-        "VonHeikemen/lsp-zero.nvim",
-        branch = 'v4.x'
+        'yobibyte/helix-nvim',
+        version = "*"
     },
-
-    -- LSP Support
+    -- LSP
     { "neovim/nvim-lspconfig" },
     { "williamboman/mason.nvim" },
     { "williamboman/mason-lspconfig.nvim" },
@@ -68,7 +64,7 @@ return require("lazy").setup({
     { "hrsh7th/cmp-nvim-lsp" },
     {
         "L3MON4D3/LuaSnip",
-        version = "2.*",
+        version = "v2.*",
         build = "make install_jsregexp",
         config = function()
             require("luasnip").setup({ enable_autosnippets = true })

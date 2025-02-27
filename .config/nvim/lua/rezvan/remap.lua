@@ -1,67 +1,66 @@
-local map = vim.api.nvim_set_keymap
-local conf = { noremap = true, silent = true }
-
--- Leader
+-- Leader settings
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
+-- Default options
+local opts = { noremap = true, silent = true }
+
+-- Keymap definitions
 local keys = {
-    -- -- Movement
-    { "n", "<C-h>",     "b" },
-    { "n", "<C-l>",     "w" },
-    { "n", "<C-k>",     "5k" },
-    { "n", "<C-j>",     "5j" },
-    { "n", "<C-d>",     "<C-d>zz" },
-    { "n", "<C-u>",     "<C-u>zz" },
-    { "v", "<C-h>",     "b" },
-    { "v", "<C-l>",     "w" },
-    { "v", "<C-k>",     "5k" },
-    { "v", "<C-j>",     "5j" },
-    { "v", "<C-d>",     "<C-d>zz" },
-    { "v", "<C-u>",     "<C-u>zz" },
+    -- Movement
+    { "n", "<C-h>",     "b",                         opts },
+    { "n", "<C-l>",     "w",                         opts },
+    { "n", "<C-k>",     "5k",                        opts },
+    { "n", "<C-j>",     "5j",                        opts },
+    { "n", "<C-d>",     "<C-d>zz",                   opts },
+    { "n", "<C-u>",     "<C-u>zz",                   opts },
+    { "v", "<C-h>",     "b",                         opts },
+    { "v", "<C-l>",     "w",                         opts },
+    { "v", "<C-k>",     "5k",                        opts },
+    { "v", "<C-j>",     "5j",                        opts },
+    { "v", "<C-d>",     "<C-d>zz",                   opts },
+    { "v", "<C-u>",     "<C-u>zz",                   opts },
 
     -- Disable arrow keys
-    { "n", "<Left>",    "<nop>" },
-    { "n", "<Right>",   "<nop>" },
-    { "n", "<Down>",    "<nop>" },
-    { "n", "<Up>",      "<nop>" },
-    { "i", "<Left>",    "<nop>" },
-    { "i", "<Right>",   "<nop>" },
-    { "i", "<Down>",    "<nop>" },
-    { "i", "<Up>",      "<nop>" },
-    { "v", "<Left>",    "<nop>" },
-    { "v", "<Right>",   "<nop>" },
-    { "v", "<Down>",    "<nop>" },
-    { "v", "<Up>",      "<nop>" },
+    { "n", "<Left>",    "<nop>",                     opts },
+    { "n", "<Right>",   "<nop>",                     opts },
+    { "n", "<Down>",    "<nop>",                     opts },
+    { "n", "<Up>",      "<nop>",                     opts },
+    { "i", "<Left>",    "<nop>",                     opts },
+    { "i", "<Right>",   "<nop>",                     opts },
+    { "i", "<Down>",    "<nop>",                     opts },
+    { "i", "<Up>",      "<nop>",                     opts },
+    { "v", "<Left>",    "<nop>",                     opts },
+    { "v", "<Right>",   "<nop>",                     opts },
+    { "v", "<Down>",    "<nop>",                     opts },
+    { "v", "<Up>",      "<nop>",                     opts },
 
-    -- -- QoL
-    { "n", "<C-s>",     ":LspZeroFormat<cr>:w<cr>" },
-    { "n", "<S-a>",     ":tabp<cr>" },
-    { "n", "<S-d>",     ":tabn<cr>" },
-    { "n", "<tab>",     ">>" },
-    { "n", "<S-tab>",   "<<" },
-    { "v", "<tab>",     ">gv" },
-    { "v", "<S-tab>",   "<gv" },
-    { "n", "<C-z>",     "u" },
-    { "v", "<C-x>",     "d" },
-    { "n", "<C-v>",     "p" },
-    { "v", "<leader>c", "y" },
-    { "n", "<Space>",   "<Nop>" },
-    { "v", "<Space>",   "<Nop>" },
+    -- QoL
+    { "n", "<S-a>",     ":tabp<cr>",                 opts },
+    { "n", "<S-d>",     ":tabn<cr>",                 opts },
+    { "n", "<tab>",     ">>",                        opts },
+    { "n", "<S-tab>",   "<<",                        opts },
+    { "v", "<tab>",     ">gv",                       opts },
+    { "v", "<S-tab>",   "<gv",                       opts },
+    { "n", "<C-z>",     "u",                         opts },
+    { "v", "<C-x>",     "d",                         opts },
+    { "n", "<C-v>",     "p",                         opts },
+    { "v", "<leader>c", "y",                         opts },
+    { "n", "<Space>",   "<Nop>",                     opts },
+    { "v", "<Space>",   "<Nop>",                     opts },
 
-    -- -- Wrapping
-    { 'n', 'k',         "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true } },
-    { 'n', 'j',         "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true } },
+    -- Wrapping
+    { "n", "k",         "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true } },
+    { "n", "j",         "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true } },
 }
 
-local setup = function()
-    for _, v in pairs(keys) do
-        if #v == 3 then
-            map(v[1], v[2], v[3], conf)
-        elseif #v == 4 then
-            map(v[1], v[2], v[3], v[4])
-        end
+-- Setup function
+local function setup()
+    for _, key in pairs(keys) do
+        vim.keymap.set(key[1], key[2], key[3], key[4])
     end
 end
 
-return setup()
+-- Export and run setup
+setup()
+return setup

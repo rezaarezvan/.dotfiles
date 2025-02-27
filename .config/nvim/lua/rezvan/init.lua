@@ -2,8 +2,6 @@ require("rezvan.remap")
 require("rezvan.lazy")
 require("rezvan.set")
 
-vim.cmd([[command! OpenChat lua require('rezvan.neuralogue').open_chat()]])
-
 local augroup = vim.api.nvim_create_augroup
 local RezvanGroup = augroup('rezvan', {})
 
