@@ -32,3 +32,4 @@ window-padding-y = 20
 window-title-font-family = "Departure Mono"
 window-height = 36
 window-width = 150
+window-decoration = "none"
