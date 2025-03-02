@@ -154,7 +154,7 @@ exec ~/.fehbg &
 bindsym Print exec --no-startup-id maim "/home/$USER/Pictures/$(date)"
 exec nvidia-settings -a "DigitalVibrance=1023" &
 
-exec alacritty &
+exec ghostty &
 exec firefox &
 exec discord &
 exec spotify &
