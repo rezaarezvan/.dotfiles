@@ -176,6 +176,8 @@ function M.retrieve(is_math)
         parse_snippet({ trig = "RR", name = "R" }, "\\mathbb{R}"),
         parse_snippet({ trig = "DD", name = "D" }, "\\mathcal{D}"),
         parse_snippet({ trig = "EE", name = "Expectation" }, "\\mathbb{E}"),
+        parse_snippet({ trig = "Var", name = "Variance" }, "\\mathrm{Var}"),
+        parse_snippet({ trig = "Cov", name = "Covariance" }, "\\mathrm{Cov}"),
         parse_snippet({ trig = "ell", name = "l" }, "\\ell"),
 
 
