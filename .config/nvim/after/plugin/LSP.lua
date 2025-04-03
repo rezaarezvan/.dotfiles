@@ -18,7 +18,6 @@ vim.api.nvim_create_autocmd('LspAttach', {
     callback = function(event)
         local opts = { buffer = event.buf, remap = false }
 
-        vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
         vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
         vim.keymap.set('n', '<leader>vws', vim.lsp.buf.workspace_symbol, opts)
         vim.keymap.set('n', '<leader>vd', vim.diagnostic.open_float, opts)
@@ -27,7 +26,6 @@ vim.api.nvim_create_autocmd('LspAttach', {
         vim.keymap.set('n', '<leader>vca', vim.lsp.buf.code_action, opts)
         vim.keymap.set('n', '<leader>vrr', vim.lsp.buf.references, opts)
         vim.keymap.set('n', '<leader>vrn', vim.lsp.buf.rename, opts)
-        vim.keymap.set('i', '<C-h>', vim.lsp.buf.signature_help, opts)
 
         vim.keymap.set('n', '<C-s>', function()
             vim.lsp.buf.format({ async = false })
@@ -41,6 +39,14 @@ vim.api.nvim_create_autocmd('LspAttach', {
             end,
         })
     end,
+})
+
+vim.diagnostic.config({
+    virtual_text = true,
+    signs = true,
+    underline = true,
+    update_in_insert = false,
+    severity_sort = true,
 })
 
 local cmp = require('cmp')
