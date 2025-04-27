@@ -191,6 +191,9 @@ function M.retrieve(is_math)
         parse_snippet({ trig = "align", name = "align" }, "\\begin{align*} \n$1 \n\\end{align*} $0"),
         parse_snippet({ trig = "cases", name = "cases" }, "\\begin{cases} \n$1 \n\\end{cases} $0"),
         parse_snippet({ trig = "equation", name = "equation" }, "\\begin{equation} \n$1 \n\\end{equation} $0"),
+        parse_snippet({ trig = "underbrace", name = "underbrace" },
+            "\\underbrace{$1}_{\\text{$2}}$0"
+        ),
     })
 
 
