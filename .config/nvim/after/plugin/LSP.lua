@@ -18,6 +18,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
     callback = function(event)
         local opts = { buffer = event.buf, remap = false }
 
+        vim.keymap.set('n', 'gd', '<C-]>', opts)
         vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
         vim.keymap.set('n', '<leader>vws', vim.lsp.buf.workspace_symbol, opts)
         vim.keymap.set('n', '<leader>vd', vim.diagnostic.open_float, opts)
