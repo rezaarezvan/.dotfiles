@@ -155,18 +155,18 @@ bindsym Print exec --no-startup-id maim "/home/$USER/Pictures/$(date)"
 exec nvidia-settings -a "DigitalVibrance=1023" &
 
 exec ghostty &
-exec firefox &
+exec zen &
 exec discord &
 exec spotify &
 exec flameshot &
 
 assign [class="alacritty"] 1
-assign [class="firefox"] 2
+assign [class="zen"] 2
 assign [class="discord"] 3
 assign [class="Spotify"] 4
 
 for_window [class="alacritty"] move to workspace 1
-for_window [class="firefox"] move to workspace 2
+for_window [class="zen"] move to workspace 2
 for_window [class="discord"] move to workspace 3
 for_window [class="^Spotify"] move to workspace 4
 
