@@ -50,10 +50,7 @@ return require("lazy").setup({
     -- Color theme(s)
     { "nyoom-engineering/oxocarbon.nvim" },
     { "Biscuit-Colorscheme/nvim" },
-    {
-        'yobibyte/helix-nvim',
-        version = "*"
-    },
+    { "yobibyte/helix-nvim",             version = "*" },
     -- LSP
     { "neovim/nvim-lspconfig" },
     { "mason-org/mason.nvim" },
@@ -73,6 +70,15 @@ return require("lazy").setup({
     },
 
     -- Misc
+    {
+        "stevearc/oil.nvim",
+        ---@module 'oil'
+        ---@type oil.SetupOpts
+        opts = {},
+        -- Optional dependencies
+        -- Lazy loading is not recommended because it is very tricky to make it work correctly in all situations.
+        lazy = false,
+    },
     { "nvim-lualine/lualine.nvim" },
     { "github/copilot.vim" },
 
