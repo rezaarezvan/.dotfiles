@@ -59,6 +59,7 @@ local function setup()
     for _, key in pairs(keys) do
         vim.keymap.set(key[1], key[2], key[3], key[4])
     end
+    vim.cmd [[command! Ex Oil]]
 end
 
 -- Export and run setup
