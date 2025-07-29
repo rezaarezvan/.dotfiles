@@ -52,6 +52,9 @@ local keys = {
     -- Wrapping
     { "n", "k",         "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true } },
     { "n", "j",         "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true } },
+
+    -- Folding
+    { "n", "<Space>",   "za",                        opts },
 }
 
 -- Setup function
