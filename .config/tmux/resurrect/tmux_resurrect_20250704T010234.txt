@@ -1,9 +1,0 @@
-pane	AFA	1	1	:*	0	tmux run-shell '~/.c ~/.c/t/resurrect	:/home/reza/.dotfiles/.config/tmux/resurrect	1	tmux	:tmux run-shell ~/.config/tmux/plugins/tmux-resurrect/scripts/save.sh
-pane	AFA	2	0	:-	0	~/S/y/AFA-Benchmark	:/home/reza/School/year_4/AFA-Benchmark	1	fish	:
-pane	semla-ito	1	1	:*	0	vim . ~/S/y/semla-ito	:/home/reza/School/year_4/semla-ito	1	nvim	:/snap/nvim/3953/usr/bin/nvim .
-pane	semla-ito	2	0	:-	0	~/S/y/semla-ito	:/home/reza/School/year_4/semla-ito	1	fish	:
-window	AFA	1	:fish	1	:*	c87e,188x46,0,0,1	:
-window	AFA	2	:fish	0	:-	c87f,188x46,0,0,2	:
-window	semla-ito	1	:nvim	1	:*	c880,188x46,0,0,3	:
-window	semla-ito	2	:fish	0	:-	c881,188x46,0,0,4	:
-state	AFA	semla-ito

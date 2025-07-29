@@ -1,20 +1,4 @@
-call plug#begin('~/.vim/plugged')
-	Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
-	Plug 'junegunn/fzf.vim'
-	Plug 'sheerun/vim-polyglot'
-	Plug 'Raimondi/delimitMate'
-	Plug 'vim-syntastic/syntastic'
-	Plug 'ryanoasis/vim-devicons'
-	Plug 'ervandew/supertab'
-	Plug 'tek256/simple-dark'
-call plug#end()
-
 set path+=**
-
-" For fzf
-nnoremap <C-p> :Files<cr>
-nnoremap <C-b> :Buffers<cr>
-nnoremap <C-g> :Rg<cr>
 
 " Movement
 noremap <C-h> b
@@ -81,7 +65,6 @@ if (has("termguicolors"))
   set termguicolors
 endif
 
-colorscheme simple-dark
 hi NonText guifg=bg
 
 set nu rnu " relative line numbering
@@ -125,20 +108,3 @@ set lazyredraw "redraws the screne when it needs to
 set showmatch "highlights matching brackets
 set incsearch "search as characters are entered
 set hlsearch "highlights matching searches
-
-" c++11 support in syntastic
-let g:syntastic_cpp_compiler = 'clang++'
-let g:syntastic_cpp_compiler_options = ' -std=c++11'
-
-" run code
-set noerrorbells visualbell t_vb=
-autocmd GUIEnter * set visualbell t_vb=
-
-augroup compileandrun
-    autocmd!
-    autocmd filetype python nnoremap <f5> :w <bar> :!python3 % <cr>
-    autocmd filetype cpp nnoremap <f5> :w <bar> !g++ -std=c++11 % <cr> :vnew <bar> :te "a.exe" <cr><cr>
-    autocmd filetype cpp nnoremap <f6> :vnew <bar> :te "a.exe" <cr>
-    autocmd filetype c nnoremap <f5> :w <bar> !gcc % && a.exe <cr>
-    autocmd filetype java nnoremap <f5> :w <bar> !javac % && java %:r <cr>
-augroup END

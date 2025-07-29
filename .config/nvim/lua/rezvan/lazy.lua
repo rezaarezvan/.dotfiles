@@ -35,7 +35,6 @@ return require("lazy").setup({
     },
 
     { "mbbill/undotree" },
-    { "tpope/vim-fugitive" },
     { "lewis6991/gitsigns.nvim" },
     { "numToStr/Comment.nvim" },
     {
@@ -48,9 +47,7 @@ return require("lazy").setup({
     },
 
     -- Color theme(s)
-    { "nyoom-engineering/oxocarbon.nvim" },
-    { "Biscuit-Colorscheme/nvim" },
-    { "yobibyte/helix-nvim",             version = "*" },
+    { "yobibyte/helix-nvim",           version = "*" },
     -- LSP
     { "neovim/nvim-lspconfig" },
     { "mason-org/mason.nvim" },
@@ -81,13 +78,4 @@ return require("lazy").setup({
     },
     { "nvim-lualine/lualine.nvim" },
     { "github/copilot.vim" },
-
-    -- Debugger
-    { "mfussenegger/nvim-dap" },
-    {
-        "rcarriga/nvim-dap-ui",
-        dependencies = { "mfussenegger/nvim-dap" }
-    },
-
-    { "theHamsta/nvim-dap-virtual-text" },
 })
