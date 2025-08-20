@@ -1,0 +1,17 @@
+pane	AFA	1	1	:*	0	~/S/y/AFA-Benchmark	:/home/reza/School/year_4/AFA-Benchmark	1	fish	:
+pane	AFA	2	0	:-	0	~/S/y/AFA-Benchmark	:/home/reza/School/year_4/AFA-Benchmark	1	fish	:
+pane	blog	1	0	:-	0	~/C/blog	:/home/reza/Code/blog	1	fish	:
+pane	blog	2	1	:*	0	~/C/blog	:/home/reza/Code/blog	1	fish	:
+pane	dotfiles	1	0	:-	0	~/.d/.config	:/home/reza/.dotfiles/.config	1	fish	:
+pane	dotfiles	2	1	:*	0	~/.d/.config	:/home/reza/.dotfiles/.config	1	fish	:
+pane	semla-ito	1	0	:-	0	nvim . ~/S/y/semla-ito	:/home/reza/School/year_4/semla-ito	1	nvim	:nvim .
+pane	semla-ito	2	1	:*	0	~/S/y/semla-ito	:/home/reza/School/year_4/semla-ito	1	fish	:
+window	AFA	1	:fish	1	:*	c87e,188x46,0,0,1	:
+window	AFA	2	:fish	0	:-	c87f,188x46,0,0,2	:
+window	blog	1	:fish	0	:-	c880,188x46,0,0,3	:
+window	blog	2	:fish	1	:*	c881,188x46,0,0,4	:
+window	dotfiles	1	:fish	0	:-	c882,188x46,0,0,5	:
+window	dotfiles	2	:fish	1	:*	c883,188x46,0,0,6	:
+window	semla-ito	1	:nvim	0	:-	c884,188x46,0,0,7	:
+window	semla-ito	2	:fish	1	:*	6471,188x46,0,0,12	:
+state	semla-ito	dotfiles

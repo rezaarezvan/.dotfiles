@@ -47,7 +47,14 @@ return require("lazy").setup({
     },
 
     -- Color theme(s)
-    { "yobibyte/helix-nvim",           version = "*" },
+    {
+        "mitch1000/backpack.nvim",
+        config = function()
+            require('backpack').setup({
+                contrast = "extreme",
+            })
+        end
+    },
     -- LSP
     { "neovim/nvim-lspconfig" },
     { "mason-org/mason.nvim" },

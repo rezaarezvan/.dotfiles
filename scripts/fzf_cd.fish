@@ -1,5 +1,5 @@
 #!/usr/bin/env fish
-set dir (fdfind --type d --hidden --exclude .git . ~ | fzf --prompt="Cd to: " --height 40% --border)
+set dir (fdfind --type d --exclude .git . $HOME | fzf --prompt="Cd to: " --height 41% --border)
 if test -n "$dir"
     cd $dir
 end
