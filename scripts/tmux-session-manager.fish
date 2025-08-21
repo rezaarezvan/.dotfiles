@@ -8,7 +8,7 @@ end
 while true
     set -l raw_choice (_list_sessions | fzf \
         --prompt="tmux sessions > " \
-        --height=40% --border --exit-0 \
+        --height=60% --border --exit-0 \
         --expect=enter,ctrl-x,ctrl-e,ctrl-r)
 
     if test -z "$raw_choice"
