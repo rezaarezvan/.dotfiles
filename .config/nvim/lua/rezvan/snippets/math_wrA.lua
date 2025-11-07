@@ -47,13 +47,6 @@ local frac_node = {
     i(0),
 }
 
-local subscript_node = {
-    f(function(_, snip)
-        return string.format("%s_{%s}", snip.captures[1], snip.captures[2])
-    end, {}),
-    i(0),
-}
-
 local frac_no_parens_triggers = {
     "(\\?[%w]+\\?^%w)/",
     "(\\?[%w]+\\?_%w)/",
@@ -73,16 +66,6 @@ function M.retrieve(is_math)
     }) --[[@as function]]
 
     local snippets = {
-        s({
-            trig = "([%a])(%d)",
-            name = "auto subscript",
-        }, vim.deepcopy(subscript_node)),
-
-        s({
-            trig = "([%a])_(%d%d)",
-            name = "auto subscript 2",
-        }, vim.deepcopy(subscript_node)),
-
         s({
             priority = 1000,
             trig = ".*%)/",
