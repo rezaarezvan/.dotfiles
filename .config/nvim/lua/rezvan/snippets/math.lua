@@ -137,8 +137,8 @@ function M.retrieve(is_math)
         parse_snippet({ trig = "mathcal", name = "mathcal" }, "\\mathcal{$1}$0"),
         parse_snippet({ trig = "mathsf", name = "mathsf" }, "\\mathsf{$1}$0"),
         parse_snippet({ trig = "mathbf", name = "mathbf" }, "\\mathbf{$1}$0"),
-        parse_snippet({ trig = "mathcal", name = "mathcal" }, "\\mathcal{$1}$0"),
         parse_snippet({ trig = "mathbb", name = "mathbb" }, "\\mathbb{$1}$0"),
+        parse_snippet({ trig = "mathrm", name = "mathrm" }, "\\mathrm{$1}$0"),
         parse_snippet({ trig = "RR", name = "R" }, "\\mathbb{R}"),
         parse_snippet({ trig = "DD", name = "D" }, "\\mathcal{D}"),
         parse_snippet({ trig = "EE", name = "expec" }, "\\mathbb{E}"),
@@ -152,6 +152,12 @@ function M.retrieve(is_math)
         parse_snippet({ trig = "leq", name = "leq" }, "\\leq "),
         parse_snippet({ trig = "geq", name = "geq" }, "\\geq "),
         parse_snippet({ trig = "sim", name = "sim" }, "\\sim "),
+        parse_snippet({ trig = "approx", name = "approx" }, "\\approx "),
+        parse_snippet({ trig = "pm", name = "pm" }, "\\pm "),
+        parse_snippet({ trig = "mp", name = "mp" }, "\\mp "),
+        parse_snippet({ trig = ":=", name = "coloneq" }, "\\coloneqq"),
+        parse_snippet({ trig = "=:", name = "eqcolon" }, "\\eqqcolon"),
+        parse_snippet({ trig = "mid", name = "mid" }, "\\mid "),
 
         parse_snippet({ trig = "align", name = "align" }, "\\begin{align*}\n$1\n\\end{align*} $0"),
         parse_snippet({ trig = "cases", name = "cases" }, "\\begin{cases}\n$1\n\\end{cases} $0"),
@@ -169,6 +175,7 @@ function M.retrieve(is_math)
             "\\underset{$1}{\\arg\\max} \\ $0"
         ),
         parse_snippet({ trig = "argmin", name = "argmin" }, "\\arg\\min \\ $0"),
+        parse_snippet({ trig = "argmax", name = "argmax" }, "\\arg\\max \\ $0"),
     })
 
 
