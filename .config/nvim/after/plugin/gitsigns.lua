@@ -1,10 +1,14 @@
--- Gitsigns
-require('gitsigns').setup {
-    signs = {
-        add = { text = '+' },
-        change = { text = '~' },
-        delete = { text = '_' },
-        topdelete = { text = '‾' },
-        changedelete = { text = '~' },
-    },
-}
+vim.schedule(function()
+    local ok, gitsigns = pcall(require, 'gitsigns')
+    if not ok then return end
+
+    gitsigns.setup {
+        signs = {
+            add = { text = '+' },
+            change = { text = '~' },
+            delete = { text = '_' },
+            topdelete = { text = '‾' },
+            changedelete = { text = '~' },
+        },
+    }
+end)

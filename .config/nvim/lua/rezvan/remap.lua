@@ -46,8 +46,6 @@ local keys = {
     { "v", "<C-x>",     "d",                         opts },
     { "n", "<C-v>",     "p",                         opts },
     { "v", "<leader>c", "y",                         opts },
-    { "n", "<Space>",   "<Nop>",                     opts },
-    { "v", "<Space>",   "<Nop>",                     opts },
 
     -- Wrapping
     { "n", "k",         "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true } },

@@ -1,6 +1,10 @@
--- Set lualine as statusline
-require('lualine').setup {
-    options = {
-        icons_enabled = false,
-    },
-}
+vim.schedule(function()
+    local ok, lualine = pcall(require, 'lualine')
+    if not ok then return end
+
+    lualine.setup {
+        options = {
+            icons_enabled = false,
+        },
+    }
+end)

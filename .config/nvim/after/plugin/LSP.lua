@@ -1,44 +1,44 @@
-vim.opt.signcolumn = 'yes'
+vim.schedule(function()
+    local ok, mason = pcall(require, 'mason')
+    if not ok then return end
 
-require('mason').setup({})
-require('mason-lspconfig').setup({
-    ensure_installed = {
-        'pyright',
-        'clangd',
-    },
-    handlers = {
-        function(server_name)
-            require('lspconfig')[server_name].setup({})
-        end,
-    },
-})
+    mason.setup()
+    require('mason-lspconfig').setup({
+        ensure_installed = { 'pyright', 'clangd', 'tinymist', 'ruff' },
+        -- automatic_enable = true is default in mason-lspconfig 2.0
+    })
+end)
 
+-- LSP keybindings on attach
 vim.api.nvim_create_autocmd('LspAttach', {
-    desc = 'LSP actions',
     callback = function(event)
-        local opts = { buffer = event.buf, remap = false }
+        local client = vim.lsp.get_client_by_id(event.data.client_id)
+        local bufnr = event.buf
+        local opts = { buffer = bufnr }
 
-        vim.keymap.set('n', 'gd', '<C-]>', opts)
+        -- Keybindings (0.11 has defaults: grn=rename, gra=code_action, grr=refs)
+        vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
         vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
-        vim.keymap.set('n', '<leader>vws', vim.lsp.buf.workspace_symbol, opts)
         vim.keymap.set('n', '<leader>vd', vim.diagnostic.open_float, opts)
         vim.keymap.set('n', '[d', vim.diagnostic.goto_next, opts)
         vim.keymap.set('n', ']d', vim.diagnostic.goto_prev, opts)
-        vim.keymap.set('n', '<leader>vca', vim.lsp.buf.code_action, opts)
-        vim.keymap.set('n', '<leader>vrr', vim.lsp.buf.references, opts)
-        vim.keymap.set('n', '<leader>vrn', vim.lsp.buf.rename, opts)
 
+        -- Ctrl-s: format and save
         vim.keymap.set('n', '<C-s>', function()
             vim.lsp.buf.format({ async = false })
             vim.cmd('w')
         end, opts)
 
-        vim.api.nvim_create_autocmd('BufWritePre', {
-            buffer = event.buf,
-            callback = function()
-                vim.lsp.buf.format({ async = false })
-            end,
-        })
+        -- Format on save (only if server supports it and doesn't handle willSaveWaitUntil)
+        if not client:supports_method('textDocument/willSaveWaitUntil')
+            and client:supports_method('textDocument/formatting') then
+            vim.api.nvim_create_autocmd('BufWritePre', {
+                buffer = bufnr,
+                callback = function()
+                    vim.lsp.buf.format({ bufnr = bufnr, id = client.id, timeout_ms = 1000 })
+                end,
+            })
+        end
     end,
 })
 
@@ -46,45 +46,46 @@ vim.diagnostic.config({
     virtual_text = true,
     signs = true,
     underline = true,
-    update_in_insert = false,
-    severity_sort = true,
 })
 
-local cmp = require('cmp')
-local luasnip = require("luasnip")
+-- nvim-cmp setup
+vim.schedule(function()
+    local ok, cmp = pcall(require, 'cmp')
+    if not ok then return end
 
-cmp.setup({
-    sources = {
-        { name = 'path' },
-        { name = 'nvim_lsp' },
-        { name = 'nvim_lua' },
-        { name = 'buffer',  keyword_length = 3 },
-    },
-    snippet = {
-        expand = function(args)
-            require('luasnip').lsp_expand(args.body)
-        end,
-    },
-    mapping = cmp.mapping.preset.insert({
-        ['<CR>'] = cmp.mapping.confirm({ select = false }),
-        ['<C-Space>'] = cmp.mapping.complete(),
-        ['<C-u>'] = cmp.mapping.scroll_docs(-4),
-        ['<C-d>'] = cmp.mapping.scroll_docs(4),
+    local luasnip = require('luasnip')
 
-        ['<Tab>'] = cmp.mapping(function(fallback)
-            if luasnip.expand_or_locally_jumpable() then
-                luasnip.expand_or_jump()
-            else
-                fallback()
-            end
-        end, { 'i', 's' }),
+    cmp.setup({
+        sources = {
+            { name = 'nvim_lsp' },
+            { name = 'buffer', keyword_length = 3 },
+        },
+        snippet = {
+            expand = function(args)
+                luasnip.lsp_expand(args.body)
+            end,
+        },
+        mapping = cmp.mapping.preset.insert({
+            ['<CR>'] = cmp.mapping.confirm({ select = false }),
+            ['<C-Space>'] = cmp.mapping.complete(),
+            ['<Up>'] = cmp.mapping.select_prev_item(),
+            ['<Down>'] = cmp.mapping.select_next_item(),
+            ['<Tab>'] = cmp.mapping(function(fallback)
+                if luasnip.expand_or_locally_jumpable() then
+                    luasnip.expand_or_jump()
+                else
+                    fallback()
+                end
+            end, { 'i', 's' }),
+            ['<S-Tab>'] = cmp.mapping(function(fallback)
+                if luasnip.jumpable(-1) then
+                    luasnip.jump(-1)
+                else
+                    fallback()
+                end
+            end, { 'i', 's' }),
+        }),
+    })
+end)
 
-        ['<S-Tab>'] = cmp.mapping(function(fallback)
-            if luasnip.jumpable(-1) then
-                luasnip.jump(-1)
-            else
-                fallback()
-            end
-        end, { 'i', 's' }),
-    }),
-})
+vim.opt.completeopt = { "menuone", "noselect" }
