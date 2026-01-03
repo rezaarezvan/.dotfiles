@@ -15,3 +15,4 @@ if status is-interactive && not set -q TMUX
     tmux
     cd ~
 end
+export PATH="$HOME/.local/bin:$PATH"
