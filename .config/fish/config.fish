@@ -5,6 +5,7 @@ set -x PATH $PATH ~/bin
 
 # Only for interactive sessions
 if status is-interactive
+    set -g fish_key_bindings fish_vi_key_bindings
     alias vim='nvim'
     set -x FZF_DEFAULT_COMMAND "fdfind --type d --hidden --exclude .git"
 end
