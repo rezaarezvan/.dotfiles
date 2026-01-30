@@ -1,27 +1,21 @@
-vim.schedule(function()
-    local ok, mason = pcall(require, 'mason')
-    if not ok then return end
+local ok, mason = pcall(require, 'mason')
+if not ok then return end
 
-    mason.setup()
-    require('mason-lspconfig').setup({
-        ensure_installed = { 'pyright', 'clangd', 'tinymist', 'ruff' },
-        -- automatic_enable = true is default in mason-lspconfig 2.0
-    })
-end)
+mason.setup()
+require('mason-lspconfig').setup({
+    ensure_installed = { 'pyright', 'clangd', 'tinymist', 'ruff' },
+    -- automatic_enable = true is default in mason-lspconfig 2.0
+})
 
 -- LSP keybindings on attach
+-- Neovim 0.11+ defaults: gd=definition, K=hover, grn=rename, gra=code_action, grr=refs, [d/]d=diagnostics
 vim.api.nvim_create_autocmd('LspAttach', {
     callback = function(event)
         local client = vim.lsp.get_client_by_id(event.data.client_id)
         local bufnr = event.buf
         local opts = { buffer = bufnr }
 
-        -- Keybindings (0.11 has defaults: grn=rename, gra=code_action, grr=refs)
-        vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
-        vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
         vim.keymap.set('n', '<leader>vd', vim.diagnostic.open_float, opts)
-        vim.keymap.set('n', '[d', vim.diagnostic.goto_next, opts)
-        vim.keymap.set('n', ']d', vim.diagnostic.goto_prev, opts)
 
         -- Ctrl-s: format and save
         vim.keymap.set('n', '<C-s>', function()
@@ -49,9 +43,8 @@ vim.diagnostic.config({
 })
 
 -- nvim-cmp setup
-vim.schedule(function()
-    local ok, cmp = pcall(require, 'cmp')
-    if not ok then return end
+local ok_cmp, cmp = pcall(require, 'cmp')
+if ok_cmp then
 
     local luasnip = require('luasnip')
 
@@ -86,6 +79,6 @@ vim.schedule(function()
             end, { 'i', 's' }),
         }),
     })
-end)
+end
 
 vim.opt.completeopt = { "menuone", "noselect" }

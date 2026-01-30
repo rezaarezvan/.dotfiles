@@ -6,7 +6,6 @@ vim.opt.splitbelow    = true
 vim.opt.splitright    = true
 
 -- Tings
-vim.opt.lazyredraw    = true
 vim.opt.ruler         = true
 vim.opt.showcmd       = true
 vim.opt.errorbells    = false

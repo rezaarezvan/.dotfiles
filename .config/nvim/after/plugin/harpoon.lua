@@ -1,12 +1,10 @@
-vim.schedule(function()
-    local ok, harpoon = pcall(require, "harpoon")
-    if not ok then return end
+local ok, harpoon = pcall(require, "harpoon")
+if not ok then return end
 
-    harpoon:setup()
+harpoon:setup()
 
-    vim.keymap.set("n", "<leader>a", function() harpoon:list():add() end)
-    vim.keymap.set("n", "<C-e>", function() harpoon.ui:toggle_quick_menu(harpoon:list()) end)
-    for i = 1, 9 do
-        vim.keymap.set("n", "<leader>" .. i, function() harpoon:list():select(i) end)
-    end
-end)
+vim.keymap.set("n", "<leader>a", function() harpoon:list():add() end)
+vim.keymap.set("n", "<C-e>", function() harpoon.ui:toggle_quick_menu(harpoon:list()) end)
+for i = 1, 9 do
+    vim.keymap.set("n", "<leader>" .. i, function() harpoon:list():select(i) end)
+end
