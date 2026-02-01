@@ -49,43 +49,96 @@ vim.diagnostic.config({
     underline = true,
 })
 
--- nvim-cmp setup
-local ok_cmp, cmp = pcall(require, 'cmp')
-if ok_cmp then
+-- Native LSP completion setup
+vim.api.nvim_create_autocmd('LspAttach', {
+    group = vim.api.nvim_create_augroup('my.lsp', {}),
+    callback = function(args)
+        local client = assert(vim.lsp.get_client_by_id(args.data.client_id))
+        if client:supports_method('textDocument/completion') then
+            -- Optional: trigger autocompletion on EVERY keypress. May be slow!
+            local chars = {}; for i = 32, 126 do table.insert(chars, string.char(i)) end
+            client.server_capabilities.completionProvider.triggerCharacters = chars
+            vim.lsp.completion.enable(true, client.id, args.buf, { autotrigger = true })
+        end
+    end,
+})
 
-    local luasnip = require('luasnip')
+vim.cmd [[set completeopt+=menuone,noselect,popup]]
 
-    cmp.setup({
-        sources = {
-            { name = 'nvim_lsp' },
-            { name = 'buffer', keyword_length = 3 },
-        },
-        snippet = {
-            expand = function(args)
-                luasnip.lsp_expand(args.body)
-            end,
-        },
-        mapping = cmp.mapping.preset.insert({
-            ['<CR>'] = cmp.mapping.confirm({ select = false }),
-            ['<C-Space>'] = cmp.mapping.complete(),
-            ['<Up>'] = cmp.mapping.select_prev_item(),
-            ['<Down>'] = cmp.mapping.select_next_item(),
-            ['<Tab>'] = cmp.mapping(function(fallback)
-                if luasnip.expand_or_locally_jumpable() then
-                    luasnip.expand_or_jump()
-                else
-                    fallback()
+-- Show LSP docs for builtin completion (resolve on selection)
+vim.api.nvim_create_autocmd('CompleteChanged', {
+    group = vim.api.nvim_create_augroup('my.lsp.completion_docs', { clear = true }),
+    callback = function()
+        local event = vim.v.event
+        if not event or not event.completed_item then return end
+
+        local cy = event.row
+        local cx = event.col
+        local cw = event.width
+        local ch = event.height
+
+        local item = event.completed_item
+        local lsp = item.user_data and item.user_data.nvim and item.user_data.nvim.lsp
+        local lsp_item = lsp and lsp.completion_item
+
+        local client = lsp and vim.lsp.get_client_by_id(lsp.client_id)
+            or vim.lsp.get_clients({ bufnr = 0 })[1]
+
+        if not client or not lsp_item then return end
+
+        client:request('completionItem/resolve', lsp_item, function(_, result)
+            vim.cmd('pclose')
+
+            if result and result.documentation then
+                local docs = result.documentation.value or result.documentation
+                if type(docs) == 'table' then docs = table.concat(docs, '\n') end
+                if not docs or docs == '' then return end
+
+                local buf = vim.api.nvim_create_buf(false, true)
+                vim.bo[buf].bufhidden = 'wipe'
+
+                local contents = vim.lsp.util.convert_input_to_markdown_lines(docs)
+                vim.api.nvim_buf_set_lines(buf, 0, -1, false, contents)
+                vim.treesitter.start(buf, 'markdown')
+
+                local dx = cx + cw + 1
+                local dw = 60
+                local anchor = 'NW'
+
+                if dx + dw > vim.o.columns then
+                    dw = vim.o.columns - dx
+                    anchor = 'NE'
                 end
-            end, { 'i', 's' }),
-            ['<S-Tab>'] = cmp.mapping(function(fallback)
-                if luasnip.jumpable(-1) then
-                    luasnip.jump(-1)
-                else
-                    fallback()
-                end
-            end, { 'i', 's' }),
-        }),
-    })
-end
 
-vim.opt.completeopt = { "menuone", "noselect" }
+                local win = vim.api.nvim_open_win(buf, false, {
+                    relative = 'editor',
+                    row = cy,
+                    col = dx,
+                    width = dw,
+                    height = ch,
+                    anchor = anchor,
+                    border = 'none',
+                    style = 'minimal',
+                    zindex = 60,
+                })
+
+                vim.wo[win].conceallevel = 2
+                vim.wo[win].wrap = true
+                vim.wo[win].previewwindow = true
+            end
+        end)
+    end,
+})
+
+vim.api.nvim_create_autocmd('CompleteDone', {
+    group = vim.api.nvim_create_augroup('my.lsp.completion_docs_done', { clear = true }),
+    callback = function()
+        vim.cmd('pclose')
+    end,
+})
+
+-- Set arrow keys for omnicomplete navigation
+vim.cmd [[
+    inoremap <expr> <Up>   pumvisible() ? "\<C-p>" : "\<Up>"
+    inoremap <expr> <Down> pumvisible() ? "\<C-n>" : "\<Down>"
+]]

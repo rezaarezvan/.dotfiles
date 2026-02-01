@@ -21,10 +21,6 @@ vim.pack.add({
     -- Snippets (autosnippets work independently)
     "https://github.com/L3MON4D3/LuaSnip",
 
-    -- Completion
-    "https://github.com/hrsh7th/nvim-cmp",
-    "https://github.com/hrsh7th/cmp-nvim-lsp",
-
     -- Appearance
     "https://github.com/mitch1000/backpack.nvim",
     "https://github.com/nvim-lualine/lualine.nvim",
