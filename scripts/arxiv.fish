@@ -1,5 +1,4 @@
 #!/usr/bin/env fish
-
 # Unified arXiv paper browser and downloader
 # Keybind: prefix + a (in tmux)
 
@@ -17,6 +16,7 @@ end
 
 # Predefined categories
 set -l categories \
+    "CS.MA   - Multiagent Systems" \
     "cs.LG   - Machine Learning" \
     "cs.AI   - Artificial Intelligence" \
     "cs.CL   - Computation and Language" \
