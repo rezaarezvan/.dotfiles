@@ -1,53 +1,22 @@
 #!/usr/bin/env python3
-"""Fetch Zotero library items for citation lookup."""
+"""Fetch Zotero library items and export BibTeX entries."""
 
 import os
 import re
+import sys
 from pyzotero import zotero
 
 
-def generate_cite_key(item: dict) -> str:
-    """Generate a citation key from item metadata."""
-    creators = item.get("creators", [])
-    first_author = ""
-    if creators:
-        c = creators[0]
-        first_author = c.get("lastName", c.get("name", "unknown"))
-        first_author = re.sub(r"[^\w]", "", first_author).lower()
-
-    year = ""
-    date = item.get("date", "")
-    if date:
-        match = re.search(r"(\d{4})", date)
-        if match:
-            year = match.group(1)
-
-    # First word of title
-    title = item.get("title", "")
-    title_word = ""
-    if title:
-        words = re.findall(r"\w+", title.lower())
-        # Skip common words
-        skip = {"the", "a", "an", "on", "in", "of", "for", "to", "and", "with"}
-        for w in words:
-            if w not in skip and len(w) > 2:
-                title_word = w
-                break
-
-    return f"{first_author}{year}{title_word}"
-
-
-def main():
+def get_zotero():
     api_key = os.getenv("ZOTERO_API_KEY")
     lib_id = os.getenv("ZOTERO_LIBRARY_ID")
     lib_type = os.getenv("ZOTERO_LIBRARY_TYPE")
+    return zotero.Zotero(lib_id, lib_type, api_key)
 
-    zot = zotero.Zotero(lib_id, lib_type, api_key)
 
-    # Fetch recent items (limit to 100 for speed)
-    items = zot.top(limit=100, sort="dateModified", direction="desc")
-
-    for item in items:
+def list_items():
+    zot = get_zotero()
+    for item in zot.top(limit=100, sort="dateModified", direction="desc"):
         data = item.get("data", {})
         if data.get("itemType") in ("attachment", "note"):
             continue
@@ -55,7 +24,6 @@ def main():
         title = data.get("title", "Untitled")
         creators = data.get("creators", [])
 
-        # Format authors
         if creators:
             first = creators[0]
             author = first.get("lastName", first.get("name", "Unknown"))
@@ -71,10 +39,21 @@ def main():
             if match:
                 year = match.group(1)
 
-        key = generate_cite_key(data)
+        print(f"{title[:70]} | {author} ({year}) [{item.get('key', '')}]")
 
-        # Format: Title | Author (Year) [key]
-        print(f"{title[:70]} | {author} ({year}) [{key}]")
+
+def export_bibtex(zotero_key):
+    zot = get_zotero()
+    entries = zot.items(itemKey=zotero_key, content="bibtex", limit=1)
+    if entries:
+        print(entries[0].strip())
+
+
+def main():
+    if len(sys.argv) > 2 and sys.argv[1] == "--bibtex":
+        export_bibtex(sys.argv[2])
+    else:
+        list_items()
 
 
 if __name__ == "__main__":
