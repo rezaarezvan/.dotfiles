@@ -76,15 +76,12 @@ for j = 1, 9 do
     vim.keymap.set("n", "<leader>" .. j, function() require("harpoon"):list():select(j) end)
 end
 
--- Undotree
-vim.keymap.set("n", "<leader>u", vim.cmd.UndotreeToggle)
 
 vim.pack.add({
     "https://github.com/nvim-lua/plenary.nvim",
     "https://github.com/nvim-telescope/telescope.nvim",
     { src = "https://github.com/ThePrimeagen/harpoon",            version = "harpoon2" },
     { src = "https://github.com/nvim-treesitter/nvim-treesitter", version = "main" },
-    "https://github.com/mbbill/undotree",
     "https://github.com/lewis6991/gitsigns.nvim",
     "https://github.com/stevearc/oil.nvim",
     "https://github.com/neovim/nvim-lspconfig",
@@ -94,6 +91,12 @@ vim.pack.add({
     "https://github.com/mitch1000/backpack.nvim",
     "https://github.com/github/copilot.vim",
 }, { load = true })
+
+-- Undotree
+vim.cmd("packadd nvim.undotree")
+vim.keymap.set("n", "<leader>u", function()
+    require("undotree").open({ command = "leftabove 30vnew" })
+end)
 
 vim.api.nvim_create_autocmd('User', {
     pattern = 'PackChanged',
