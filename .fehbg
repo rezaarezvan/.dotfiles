@@ -1,3 +1,2 @@
 #!/bin/sh
-# feh --no-fehbg --bg-scale '/home/reza/Pictures/_pic/Wallpapers/Cole_Thomas_The_Course_of_Empire_The_Savage_State_1836.jpg'
-feh --no-fehbg --bg-scale '/home/reza/Pictures/_pic/Wallpapers/Sanford_Robinson_Gifford_-_The_Artist_Sketching_at_Mount_Desert,_Maine_(1860s).jpg'
+feh --no-fehbg --bg-scale '/home/reza/Pictures/_pic/Wallpapers/Vincent_Van_Gogh_-_Wheatfield_with_Crows.jpg'
