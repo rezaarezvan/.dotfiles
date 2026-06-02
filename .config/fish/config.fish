@@ -3,6 +3,14 @@ set -x PATH $CUDA_HOME/bin $PATH
 set -x LD_LIBRARY_PATH $CUDA_HOME/lib64 $LD_LIBRARY_PATH
 set -x PATH $PATH ~/bin
 
+# Neovim nightly managed by bob (update with `bob update nightly`)
+set -x PATH ~/.local/share/bob/nvim-bin $PATH
+
+# node — latest version installed under ~/.nvm (no nvm machinery)
+if test -d ~/.nvm/versions/node
+    set -x PATH (command ls -d ~/.nvm/versions/node/*/bin | sort -V | tail -1) $PATH
+end
+
 # Only for interactive sessions
 if status is-interactive
     set -g fish_key_bindings fish_vi_key_bindings
