@@ -38,6 +38,7 @@ vim.g.canola = {
     confirm = "delete",
     save = "auto",
     delete = { wipe = true },
+    border = "rounded",
 }
 
 vim.pack.add({
