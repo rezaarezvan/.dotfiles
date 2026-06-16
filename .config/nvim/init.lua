@@ -31,13 +31,22 @@ vim.opt.statusline = ' %f %m %= %y  %l:%c  %P '
 
 local opts         = { silent = true }
 
+vim.g.canola = {
+    hidden = { enabled = false, patterns = { "^%." }, always = {} },
+    columns = { "permissions", "size", "mtime" },
+    highlights = { columns = true },
+    confirm = "delete",
+    save = "auto",
+    delete = { wipe = true },
+}
+
 vim.pack.add({
     "https://github.com/nvim-lua/plenary.nvim",
     "https://github.com/nvim-telescope/telescope.nvim",
     { src = "https://github.com/ThePrimeagen/harpoon",            version = "harpoon2" },
     { src = "https://github.com/nvim-treesitter/nvim-treesitter", version = "main" },
     "https://github.com/lewis6991/gitsigns.nvim",
-    "https://github.com/stevearc/oil.nvim",
+    { src = "https://github.com/barrettruth/canola.nvim", version = "canola", },
     "https://github.com/mason-org/mason.nvim",
     "https://github.com/L3MON4D3/LuaSnip",
     "https://github.com/mitch1000/backpack.nvim",
@@ -74,8 +83,8 @@ vim.keymap.set("n", "<Space>", function()
     return vim.fn.foldclosed(vim.fn.line('.')) == -1 and 'zc' or 'zO'
 end, { expr = true, silent = true })
 
--- Oil as file explorer
-vim.cmd [[command! Ex Oil]]
+-- Canola as file explorer
+vim.cmd [[command! Ex Canola]]
 
 -- Undotree
 vim.cmd("packadd nvim.undotree")
@@ -195,14 +204,6 @@ vim.diagnostic.config({ virtual_text = true })
 vim.opt.completeopt:append({ 'menuone', 'noselect' })
 vim.keymap.set('i', '<Up>', function() return vim.fn.pumvisible() == 1 and '<C-p>' or '<Up>' end, { expr = true })
 vim.keymap.set('i', '<Down>', function() return vim.fn.pumvisible() == 1 and '<C-n>' or '<Down>' end, { expr = true })
-
--- Oil ------------------------------------------------------------------
-do
-    local ok, oil = pcall(require, "oil")
-    if ok then
-        oil.setup({ default_file_explorer = true, view_options = { show_hidden = true } })
-    end
-end
 
 -- Gitsigns -------------------------------------------------------------
 do
