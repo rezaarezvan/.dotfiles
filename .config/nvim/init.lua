@@ -13,7 +13,6 @@ vim.opt.scrolloff     = 8
 vim.opt.signcolumn    = "yes"
 vim.opt.isfname:append("@-@")
 vim.opt.colorcolumn    = "80"
-vim.opt.updatetime     = 50
 vim.opt.foldmethod     = "expr"
 vim.opt.foldexpr       = "v:lua.vim.treesitter.foldexpr()"
 vim.opt.foldlevelstart = 1
@@ -27,7 +26,7 @@ vim.o.breakindent      = true
 vim.o.ignorecase       = true
 vim.o.smartcase        = true
 vim.opt.clipboard:append('unnamedplus')
-vim.opt.statusline = ' %f %m %= %y  %l:%c  %P '
+vim.opt.winborder      = "rounded"
 
 local opts         = { silent = true }
 
@@ -38,7 +37,6 @@ vim.g.canola = {
     confirm = "delete",
     save = "auto",
     delete = { wipe = true },
-    border = "rounded",
 }
 
 vim.pack.add({
@@ -52,11 +50,11 @@ vim.pack.add({
     "https://github.com/L3MON4D3/LuaSnip",
     "https://github.com/mitch1000/backpack.nvim",
     "https://github.com/github/copilot.vim",
-}, { load = true })
+})
 
 -- Theme
 vim.opt.background = "dark"
-pcall(vim.cmd.colorscheme, "backpack")
+vim.cmd.colorscheme("backpack")
 
 -- Transparent background
 vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
@@ -72,8 +70,8 @@ vim.keymap.set({ "n", "v" }, "<C-d>", "<C-d>zz", opts)
 vim.keymap.set({ "n", "v" }, "<C-u>", "<C-u>zz", opts)
 
 -- QoL
-vim.keymap.set({ "n", "v" }, "<tab>", ">gv", opts)
-vim.keymap.set({ "n", "v" }, "<S-tab>", "<gv", opts)
+vim.keymap.set("v", "<tab>", ">gv", opts)
+vim.keymap.set("v", "<S-tab>", "<gv", opts)
 
 -- Wrapping-aware movement
 vim.keymap.set("n", "k", "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
@@ -95,9 +93,10 @@ end)
 
 vim.api.nvim_create_autocmd('User', {
     pattern = 'PackChanged',
-    callback = function()
-        local ok, ts = pcall(require, 'nvim-treesitter.install')
-        if ok then ts.update() end
+    callback = function(event)
+        if event.data.spec.name == 'nvim-treesitter' and event.data.kind ~= 'delete' then
+            require('nvim-treesitter.install').update()
+        end
     end,
 })
 
@@ -122,57 +121,38 @@ vim.api.nvim_create_autocmd('BufWritePre', {
 
 -- Harpoon setup
 do
-    local ok, harpoon = pcall(require, "harpoon")
-    if ok then harpoon:setup() end
+    local harpoon = require("harpoon")
+    harpoon:setup()
 
-    vim.keymap.set("n", "<leader>a", function() require("harpoon"):list():add() end)
+    vim.keymap.set("n", "<leader>a", function() harpoon:list():add() end)
     vim.keymap.set("n", "<C-e>", function()
-        require("harpoon").ui:toggle_quick_menu(require("harpoon"):list())
+        harpoon.ui:toggle_quick_menu(harpoon:list())
     end)
     for j = 1, 9 do
-        vim.keymap.set("n", "<leader>" .. j, function() require("harpoon"):list():select(j) end)
+        vim.keymap.set("n", "<leader>" .. j, function() harpoon:list():select(j) end)
     end
 end
 
 -- Telescope ------------------------------------------------------------
 do
-    local ok, telescope = pcall(require, 'telescope')
-    if ok then
-        telescope.setup {
-            defaults = {
-                file_sorter      = require("telescope.sorters").get_fzy_sorter,
-                prompt_prefix    = " >",
-                file_previewer   = require("telescope.previewers").vim_buffer_cat.new,
-                grep_previewer   = require("telescope.previewers").vim_buffer_vimgrep.new,
-            },
-        }
-        pcall(telescope.load_extension, 'fzf')
-
-        local builtin = require('telescope.builtin')
-        vim.keymap.set('n', '<leader>sf', builtin.find_files, { desc = 'Search Files' })
-        vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = 'Search by Grep' })
-    end
+    local builtin = require('telescope.builtin')
+    vim.keymap.set('n', '<leader>sf', builtin.find_files, { desc = 'Search Files' })
+    vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = 'Search by Grep' })
 end
 
 -- Treesitter -----------------------------------------------------------
 do
-    local ok, ts = pcall(require, 'nvim-treesitter')
-    if ok then
-        ts.setup { install_dir = vim.fn.stdpath('data') .. '/site' }
-        ts.install({ 'python', 'lua', 'latex', 'markdown', 'markdown_inline', 'vim', 'vimdoc', 'bash', 'c', 'cpp',
-            'typst' })
-        vim.treesitter.language.register('latex', 'plaintex')
-        vim.api.nvim_create_autocmd('FileType', {
-            callback = function(args) pcall(vim.treesitter.start, args.buf) end,
-        })
-    end
+    local ts = require('nvim-treesitter')
+    ts.install({ 'python', 'lua', 'latex', 'markdown', 'markdown_inline', 'vim', 'vimdoc', 'bash', 'c', 'cpp',
+        'typst' })
+    vim.treesitter.language.register('latex', 'plaintex')
+    vim.api.nvim_create_autocmd('FileType', {
+        callback = function(args) pcall(vim.treesitter.start, args.buf) end,
+    })
 end
 
 -- LSP ------------------------------------------------------------------
-do
-    local ok, mason = pcall(require, 'mason')
-    if ok then mason.setup() end -- mason.setup() prepends mason/bin to nvim's PATH
-end
+require('mason').setup() -- Prepends mason/bin to Neovim's PATH.
 
 -- Server configs live in lsp/<name>.lua; install binaries once with :MasonInstall
 vim.lsp.enable({ 'pyright', 'ruff', 'clangd', 'tinymist' })
@@ -187,46 +167,26 @@ vim.api.nvim_create_autocmd('LspAttach', {
         vim.keymap.set('n', 'gd', vim.lsp.buf.definition, o)
         vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, o)
         vim.keymap.set('n', '<C-s>', function()
-            vim.lsp.buf.format({ async = false })
+            vim.lsp.buf.format()
             vim.cmd('w')
         end, o)
 
         if client:supports_method('textDocument/completion') then
-            local chars = {}
-            for i = 32, 126 do table.insert(chars, string.char(i)) end
-            client.server_capabilities.completionProvider.triggerCharacters = chars
-            vim.lsp.completion.enable(true, client.id, bufnr, { autotrigger = true })
+            vim.lsp.completion.enable(true, client.id, bufnr)
         end
     end,
 })
 
 vim.diagnostic.config({ virtual_text = true })
 
+vim.opt.autocomplete = true
+vim.opt.complete:prepend('o')
 vim.opt.completeopt:append({ 'menuone', 'noselect' })
 vim.keymap.set('i', '<Up>', function() return vim.fn.pumvisible() == 1 and '<C-p>' or '<Up>' end, { expr = true })
 vim.keymap.set('i', '<Down>', function() return vim.fn.pumvisible() == 1 and '<C-n>' or '<Down>' end, { expr = true })
 
--- Gitsigns -------------------------------------------------------------
-do
-    local ok, gitsigns = pcall(require, 'gitsigns')
-    if ok then
-        gitsigns.setup {
-            signs = {
-                add          = { text = '+' },
-                change       = { text = '~' },
-                delete       = { text = '_' },
-                topdelete    = { text = '‾' },
-                changedelete = { text = '~' },
-            },
-        }
-    end
-end
-
 -- LuaSnip --------------------------------------------------------------
 do
-    local ok, ls = pcall(require, "luasnip")
-    if ok then
-        ls.setup({ enable_autosnippets = true })
-        require("snippets").setup()
-    end
+    require("luasnip").setup({ enable_autosnippets = true })
+    require("snippets").setup()
 end
