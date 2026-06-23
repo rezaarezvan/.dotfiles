@@ -46,9 +46,7 @@ def display_item(item: dict[str, Any]) -> Optional[str]:
 def list_items() -> int:
     client = get_zotero()
     items = list(
-        client.everything(
-            client.top(limit=100, sort="dateModified", direction="desc")
-        )
+        client.everything(client.top(limit=100, sort="dateModified", direction="desc"))
     )
     displayed = [line for item in items if (line := display_item(item))]
     if not displayed:
@@ -61,7 +59,9 @@ def list_items() -> int:
 def export_bibtex(zotero_key: str) -> int:
     entries = get_zotero().items(itemKey=zotero_key, content="bibtex", limit=1)
     if not entries:
-        print(f"No BibTeX entry returned for Zotero item {zotero_key}.", file=sys.stderr)
+        print(
+            f"No BibTeX entry returned for Zotero item {zotero_key}.", file=sys.stderr
+        )
         return 1
     print(entries[0].strip())
     return 0

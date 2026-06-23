@@ -15,6 +15,9 @@ import arxiv
 from pyzotero import zotero
 
 
+ARXIV_ID_RE = re.compile(r"(?<!\d)(\d{4}\.\d{4,5})(?:v\d+)?", re.IGNORECASE)
+
+
 def get_zotero():
     required = ("ZOTERO_API_KEY", "ZOTERO_LIBRARY_ID", "ZOTERO_LIBRARY_TYPE")
     missing = [name for name in required if not os.getenv(name)]
@@ -32,8 +35,13 @@ def all_results(client, first_page):
 
 
 def research_dir() -> Path:
-    configured = os.getenv("PHD_RESEARCH_DIR", "~/Code/PhD/research")
-    return Path(configured).expanduser()
+    configured = os.getenv("PHD_RESEARCH_DIR")
+    if not configured:
+        raise RuntimeError("Missing environment variable: PHD_RESEARCH_DIR")
+    path = Path(os.path.expandvars(configured)).expanduser()
+    if not path.is_dir():
+        raise RuntimeError(f"PHD_RESEARCH_DIR is not a directory: {path}")
+    return path
 
 
 def sanitize_filename(title: str) -> str:
@@ -86,21 +94,35 @@ def get_inbox_key(client: Any) -> str:
     raise RuntimeError("Zotero collection '00 Inbox' is missing")
 
 
-def find_arxiv_item(client: Any, arxiv_id: str) -> Optional[dict[str, Any]]:
-    canonical_id = arxiv_id.split("v", 1)[0]
-    candidates = all_results(
-        client,
-        client.items(q=canonical_id, qmode="everything", limit=100),
+def canonical_arxiv_id(arxiv_id: str) -> str:
+    match = ARXIV_ID_RE.search(arxiv_id)
+    if not match:
+        return arxiv_id.split("v", 1)[0].lower()
+    return match.group(1).lower()
+
+
+def item_arxiv_id(item: dict[str, Any]) -> Optional[str]:
+    data = item.get("data", {})
+    haystack = "\n".join(
+        str(data.get(field, "")) for field in ("extra", "url", "title")
     )
-    marker = f"arXiv:{canonical_id}".lower()
-    for item in candidates:
-        data = item.get("data", {})
-        haystack = "\n".join(
-            str(data.get(field, "")) for field in ("extra", "url", "title")
-        ).lower()
-        if marker in haystack or f"arxiv.org/abs/{canonical_id}" in haystack:
-            return item
-    return None
+    match = ARXIV_ID_RE.search(haystack)
+    return match.group(1).lower() if match else None
+
+
+def find_arxiv_item(client: Any, arxiv_id: str) -> Optional[dict[str, Any]]:
+    canonical_id = canonical_arxiv_id(arxiv_id)
+    items = all_results(client, client.top(limit=100))
+    matches = [
+        item
+        for item in items
+        if item.get("data", {}).get("itemType")
+        not in {"attachment", "note", "annotation"}
+        and item_arxiv_id(item) == canonical_id
+    ]
+    if not matches:
+        return None
+    return min(matches, key=lambda item: item.get("data", {}).get("dateAdded", ""))
 
 
 def has_pdf_attachment(client: Any, item_key: str) -> bool:
@@ -182,8 +204,10 @@ def download_paper(arxiv_id: str, category: str) -> dict[str, Any]:
     pdf_path = Path(paper.download_pdf(dirpath=temp_dir, filename=pdf_name))
 
     duplicate = existing is not None
-    item_key = existing["key"] if existing else create_zotero_item(
-        client, paper, category, inbox_key
+    item_key = (
+        existing["key"]
+        if existing
+        else create_zotero_item(client, paper, category, inbox_key)
     )
     if not duplicate or not has_pdf_attachment(client, item_key):
         client.attachment_simple([str(pdf_path)], item_key)

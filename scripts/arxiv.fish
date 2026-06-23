@@ -4,12 +4,23 @@
 
 set -l script_dir (dirname (status filename))
 
-# Source environment
 if test -f ~/.env_arxiv_zotero
     source ~/.env_arxiv_zotero
 else
     echo "Missing ~/.env_arxiv_zotero"
-    echo "Required: ZOTERO_API_KEY, ZOTERO_LIBRARY_ID, ZOTERO_LIBRARY_TYPE"
+    echo "Required: ZOTERO_API_KEY, ZOTERO_LIBRARY_ID, ZOTERO_LIBRARY_TYPE, PHD_RESEARCH_DIR"
+    read -P "Press enter to exit..."
+    exit 1
+end
+
+set -l missing_env
+for var in ZOTERO_API_KEY ZOTERO_LIBRARY_ID ZOTERO_LIBRARY_TYPE PHD_RESEARCH_DIR
+    if not set -q $var
+        set -a missing_env $var
+    end
+end
+if test (count $missing_env) -gt 0
+    echo "Missing environment variables: "(string join ", " $missing_env)
     read -P "Press enter to exit..."
     exit 1
 end
@@ -18,6 +29,47 @@ if not python3 -c "import arxiv, pyzotero" 2>/dev/null
     echo "Missing Python packages."
     echo "Run: python3 -m pip install --user 'arxiv<3' 'pyzotero<1.10' 'urllib3<2'"
     exit 1
+end
+
+function open_pdf --argument-names pdf_path
+    set -l cleanup_dir (dirname "$pdf_path")
+
+    if command -q sioyek
+        nohup fish -c 'sioyek "$argv[1]" >/tmp/arxiv-sioyek.log 2>&1; rm -rf "$argv[2]"' -- "$pdf_path" "$cleanup_dir" >/dev/null 2>&1 &
+        return 0
+    end
+
+    switch (uname -s)
+        case Darwin
+            if command -q open
+                nohup fish -c 'open -W "$argv[1]" >/tmp/arxiv-open.log 2>&1; rm -rf "$argv[2]"' -- "$pdf_path" "$cleanup_dir" >/dev/null 2>&1 &
+                return 0
+            end
+        case '*'
+            if command -q xdg-open
+                nohup fish -c 'xdg-open "$argv[1]" >/tmp/arxiv-xdg-open.log 2>&1; sleep 3600; rm -rf "$argv[2]"' -- "$pdf_path" "$cleanup_dir" >/dev/null 2>&1 &
+                return 0
+            end
+    end
+
+    echo "No PDF viewer found. Install sioyek or configure the OS default opener."
+    return 1
+end
+
+function open_note --argument-names notes_path arxiv_id
+    if set -q TMUX
+        if not command -q tmux
+            echo "Inside tmux, but tmux is not on PATH."
+            return 1
+        end
+
+        set -l note_dir (dirname "$notes_path")
+        set -l escaped_note (string escape -- "$notes_path")
+        tmux new-window -c "$note_dir" -n "arxiv:$arxiv_id" "nvim $escaped_note"
+        return $status
+    end
+
+    nvim "$notes_path"
 end
 
 # Predefined categories
@@ -117,6 +169,7 @@ test -z "$selected" && exit 0
 
 # Process each selected paper
 set -l downloaded_count 0
+set -l keep_open 0
 for paper in $selected
     # Extract arXiv ID from selection
     set -l arxiv_id (string replace -r '^\[([^\]]+)\].*$' '$1' -- $paper)
@@ -140,22 +193,14 @@ for paper in $selected
         echo "Already present in Zotero; reusing the existing item."
     end
 
-    # Open PDF (blocking)
-    echo "Opening PDF... (close to continue)"
-    set -l viewer_ok 0
-    if command -q sioyek
-        sioyek "$pdf_path"
-        and set viewer_ok 1
-    end
-    if test $viewer_ok -eq 0
-        echo "Sioyek could not start; opening the PDF in Preview instead."
-        open -a Preview "$pdf_path"
+    echo "Opening notes..."
+    if not open_note "$notes_path" "$arxiv_id"
+        echo "Could not open notes in a new tmux window: $notes_path"
+        set keep_open 1
     end
 
-    # Open notes (blocking)
-    echo "Opening notes..."
-    nvim "$notes_path"
-    rm -rf (dirname "$pdf_path")
+    echo "Opening PDF..."
+    open_pdf "$pdf_path"
 end
 
 if test $downloaded_count -gt 0
@@ -164,4 +209,6 @@ if test $downloaded_count -gt 0
     echo "Review and commit Markdown notes from $PHD_RESEARCH_DIR yourself."
 end
 
-read -P "Press enter to exit..."
+if test $keep_open -eq 1
+    read -P "Press enter to exit..."
+end
