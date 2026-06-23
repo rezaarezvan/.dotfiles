@@ -9,7 +9,7 @@ persistent-workspaces = ['1', '2', '3', '4', '5', '6', '7', '8', '9']
 # Auto-start apps
 after-startup-command = [
     'exec-and-forget open -a Ghostty',
-    'exec-and-forget open -a "Zen Browser"',
+    'exec-and-forget open -a "Helium"',
     'exec-and-forget open -a Discord',
     'exec-and-forget open -a Spotify',
 ]
@@ -97,9 +97,9 @@ if.app-id = 'com.mitchellh.ghostty'
 check-further-callbacks = false
 run = 'move-node-to-workspace 1'
 
-# Workspace 2: Browser (Zen)
+# Workspace 2: Browser (Helium)
 [[on-window-detected]]
-if.app-id = 'app.zen-browser.zen'
+if.app-id = 'net.imput.helium'
 check-further-callbacks = false
 run = 'move-node-to-workspace 2'
 

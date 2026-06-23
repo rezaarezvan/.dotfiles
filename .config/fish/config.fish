@@ -15,7 +15,11 @@ end
 if status is-interactive
     set -g fish_key_bindings fish_vi_key_bindings
     alias vim='nvim'
-    set -x FZF_DEFAULT_COMMAND "fdfind --type d --hidden --exclude .git"
+    if command -q fd
+        set -x FZF_DEFAULT_COMMAND "fd --type d --hidden --exclude .git"
+    else if command -q fdfind
+        set -x FZF_DEFAULT_COMMAND "fdfind --type d --hidden --exclude .git"
+    end
 end
 
 # Start tmux only if not already in a tmux session and in an interactive shell
