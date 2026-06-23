@@ -9,8 +9,14 @@ if test -f ~/.env_arxiv_zotero
     source ~/.env_arxiv_zotero
 else
     echo "Missing ~/.env_arxiv_zotero"
-    echo "Required: ZOTERO_API_KEY, ZOTERO_LIBRARY_ID, ZOTERO_LIBRARY_TYPE, PAPERS_DIR"
+    echo "Required: ZOTERO_API_KEY, ZOTERO_LIBRARY_ID, ZOTERO_LIBRARY_TYPE"
     read -P "Press enter to exit..."
+    exit 1
+end
+
+if not python3 -c "import arxiv, pyzotero" 2>/dev/null
+    echo "Missing Python packages."
+    echo "Run: python3 -m pip install --user 'arxiv<3' 'pyzotero<1.10' 'urllib3<2'"
     exit 1
 end
 
@@ -65,6 +71,10 @@ switch $mode
 
         echo "Fetching $count_val papers from $category..."
         set papers_json (python3 $script_dir/arxiv_backend.py list $category $count_val)
+        or begin
+            read -P "Press enter to exit..."
+            exit 1
+        end
 
     case "Search by Query"
         read -P "Search query: " query
@@ -75,6 +85,10 @@ switch $mode
 
         echo "Searching arXiv..."
         set papers_json (python3 $script_dir/arxiv_backend.py search "$query" $count)
+        or begin
+            read -P "Press enter to exit..."
+            exit 1
+        end
 end
 
 # Parse JSON and format for fzf
@@ -105,7 +119,7 @@ test -z "$selected" && exit 0
 set -l downloaded_count 0
 for paper in $selected
     # Extract arXiv ID from selection
-    set -l arxiv_id (echo $paper | grep -oP '^\[\K[^\]]+')
+    set -l arxiv_id (string replace -r '^\[([^\]]+)\].*$' '$1' -- $paper)
 
     echo ""
     echo "Processing: $paper"
@@ -113,28 +127,41 @@ for paper in $selected
 
     # Download paper and get paths
     set -l result (python3 $script_dir/arxiv_backend.py download $arxiv_id $category)
+    or begin
+        echo "Could not process $arxiv_id"
+        continue
+    end
     set -l pdf_path (echo $result | python3 -c "import json,sys; print(json.load(sys.stdin)['pdf'])")
     set -l notes_path (echo $result | python3 -c "import json,sys; print(json.load(sys.stdin)['notes'])")
+    set -l duplicate (echo $result | python3 -c "import json,sys; print(str(json.load(sys.stdin)['duplicate']).lower())")
 
     set downloaded_count (math $downloaded_count + 1)
+    if test "$duplicate" = true
+        echo "Already present in Zotero; reusing the existing item."
+    end
 
     # Open PDF (blocking)
     echo "Opening PDF... (close to continue)"
-    sioyek "$pdf_path"
+    set -l viewer_ok 0
+    if command -q sioyek
+        sioyek "$pdf_path"
+        and set viewer_ok 1
+    end
+    if test $viewer_ok -eq 0
+        echo "Sioyek could not start; opening the PDF in Preview instead."
+        open -a Preview "$pdf_path"
+    end
 
     # Open notes (blocking)
     echo "Opening notes..."
     nvim "$notes_path"
+    rm -rf (dirname "$pdf_path")
 end
 
-# Git commit if papers were downloaded
 if test $downloaded_count -gt 0
     echo ""
-    echo "Committing $downloaded_count paper(s) to git..."
-    cd $PAPERS_DIR
-    git add -A
-    git commit -m "Added $downloaded_count paper(s) from $category" 2>/dev/null
-    echo "Done!"
+    echo "Processed $downloaded_count paper(s)."
+    echo "Review and commit Markdown notes from $PHD_RESEARCH_DIR yourself."
 end
 
 read -P "Press enter to exit..."
