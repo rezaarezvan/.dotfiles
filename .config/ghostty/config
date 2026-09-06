@@ -17,7 +17,7 @@ palette = 13=#9894b3
 palette = 14=#ca6bac
 palette = 15=#ffe9c7
 
-font-family = "Departure Mono"
+font-family = "DepartureMono Nerd Font Mono"
 font-size = 12
 
 keybind = ctrl+q=quit
@@ -25,11 +25,11 @@ keybind = ctrl+n=new_window
 
 mouse-hide-while-typing = true
 
-background-opacity = 0.95
+background-opacity = 0.8
 window-padding-x = 15
 window-padding-y = 20
 
-window-title-font-family = "Departure Mono"
+window-title-font-family = "DepartureMono Nerd Font Mono"
 window-height = 36
 window-width = 150
 window-decoration = "none"
@@ -37,4 +37,8 @@ macos-titlebar-style = hidden
 
 cursor-style = block
 cursor-style-blink = false
+cursor-color = #ffe9c7
+cursor-text = #1a1515
+selection-background = #453636
+selection-foreground = #ffe9c7
 shell-integration-features = no-cursor

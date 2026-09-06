@@ -1,16 +1,16 @@
 function fish_prompt --description 'Write out the prompt'
   set last_ret $status
 
-  # Palette
-  set -l base01 55f
-  set -l base02 55a
-  set -l base03 777
+  # Palette -- Biscuit Mar Dark
+  set -l base01 ffe9c7
+  set -l base02 9c8181
+  set -l base03 967a7a
 
-  set -l c_error f77
-  set -l c_success 7f7
+  set -l c_error e3556f
+  set -l c_success 949f6b
 
-  set -l c_yellow ff5
-  set -l c_magenta f0d
+  set -l c_yellow e39c45
+  set -l c_magenta ca6bac
 
   # Just calculate these once, to save a few cycles when displaying the prompt
   if not set -q __fish_prompt_hostname
@@ -52,5 +52,5 @@ function fish_prompt --description 'Write out the prompt'
 
   set -l prompt_end (_fisk_concat (set_color $base01) '➞')
 
-  echo -n (_fisk_concat $ret_part " " $user_part " " $context_part " " (set_color red) "ζ" (set_color normal) $prompt_end (set_color normal) " ")
+  echo -n (_fisk_concat $ret_part " " $user_part " " $context_part " " (set_color $c_error) "ζ" (set_color normal) $prompt_end (set_color normal) " ")
 end

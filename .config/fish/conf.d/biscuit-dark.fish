@@ -1,14 +1,16 @@
-# Dracula Color Palette
-set -l foreground f8f8f2
-set -l selection 44475a
-set -l comment 6272a4
-set -l red ff5555
-set -l orange ffb86c
-set -l yellow f1fa8c
-set -l green 50fa7b
-set -l purple bd93f9
-set -l cyan 8be9fd
-set -l pink ff79c6
+# Biscuit Mar Dark. Most Biscuit colors already clear 4.5:1 on #1a1515, so these
+# are the stock values; only red/purple/cyan are lifted, using Biscuit's own
+# bright variants rather than invented ones.
+set -l foreground ffe9c7
+set -l selection 453636
+set -l comment 967a7a
+set -l red e3556f
+set -l orange e39c45
+set -l yellow f07942
+set -l green 949f6b
+set -l purple 9894b3
+set -l cyan ca6bac
+set -l pink ae3f8a
 
 # Syntax Highlighting Colors
 set -g fish_color_normal $foreground

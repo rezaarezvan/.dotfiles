@@ -6,7 +6,7 @@
   },
   "display": {
     "separator": "  ",
-    "color": { "keys": "red", "title": "yellow" },
+    "color": { "keys": "red", "title": "cyan" },
     "key": { "width": 9 }
   },
   "modules": [

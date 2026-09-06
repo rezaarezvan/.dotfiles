@@ -4,12 +4,8 @@
       "rev": "0abc8f390b278c3b4aabc4c004ac8a088b65cf24",
       "src": "https://github.com/L3MON4D3/LuaSnip"
     },
-    "backpack.nvim": {
-      "rev": "d4428964cf5d1ae8c9a27ef3540251d41902e209",
-      "src": "https://github.com/mitch1000/backpack.nvim"
-    },
     "canola.nvim": {
-      "rev": "5f35cd57b2a96c490102cb74c1551a65c3bf7cf7",
+      "rev": "3ca7adc52418cfadd0450fb0858413b9935f00d5",
       "src": "https://github.com/barrettruth/canola.nvim",
       "version": "'canola'"
     },
@@ -18,7 +14,7 @@
       "src": "https://github.com/github/copilot.vim"
     },
     "gitsigns.nvim": {
-      "rev": "dd3f588bacbeb041be6facf1742e42097f62165d",
+      "rev": "31d6fb2d618bca1482b9f274751ead5f03461408",
       "src": "https://github.com/lewis6991/gitsigns.nvim"
     },
     "harpoon": {
@@ -31,7 +27,7 @@
       "src": "https://github.com/mason-org/mason.nvim"
     },
     "nvim-treesitter": {
-      "rev": "4916d6592ede8c07973490d9322f187e07dfefac",
+      "rev": "41416e81a6c7f4af4984395bfe0cd8d174e70976",
       "src": "https://github.com/nvim-treesitter/nvim-treesitter",
       "version": "'main'"
     },

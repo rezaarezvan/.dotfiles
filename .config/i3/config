@@ -2,7 +2,7 @@
 set $mod Mod1
 
 # Font
-font pango:Departure Mono Nerd Font 12px
+font pango:DepartureMono Nerd Font 11
 
 # Thin borders
 hide_edge_borders both
@@ -10,7 +10,6 @@ hide_edge_borders both
 exec --no-startup-id dex --autostart --environment i3
 exec --no-startup-id xss-lock --transfer-sleep-lock -- i3lock --nofork
 exec --no-startup-id nm-applet
-exec_always --no-startup-id dunst
 
 # Use pactl to adjust volume in PulseAudio.
 set $refresh_i3status killall -SIGUSR1 i3status
@@ -133,7 +132,6 @@ bar {
 }
 
 exec_always --no-startup-id picom &
-exec --no-startup-id picom -CGb &
 exec_always --no-startup-id dunst &
 exec_always --no-startup-id killall -q
 
@@ -148,12 +146,12 @@ exec discord &
 exec spotify &
 exec flameshot &
 
-assign [class="alacritty"] 1
+assign [class="com.mitchellh.ghostty"] 1
 assign [class="zen"] 2
 assign [class="discord"] 3
 assign [class="Spotify"] 4
 
-for_window [class="alacritty"] move to workspace 1
+for_window [class="com.mitchellh.ghostty"] move to workspace 1
 for_window [class="zen"] move to workspace 2
 for_window [class="discord"] move to workspace 3
 for_window [class="^Spotify"] move to workspace 4

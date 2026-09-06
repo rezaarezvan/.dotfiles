@@ -48,22 +48,24 @@ vim.pack.add({
     { src = "https://github.com/barrettruth/canola.nvim", version = "canola", },
     "https://github.com/mason-org/mason.nvim",
     "https://github.com/L3MON4D3/LuaSnip",
-    "https://github.com/mitch1000/backpack.nvim",
     "https://github.com/github/copilot.vim",
 })
 
 -- Theme
 vim.opt.background = "dark"
-vim.cmd.colorscheme("backpack")
+vim.cmd.colorscheme("biscuit-dark")
 
--- Transparent background
-vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
-vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
-vim.api.nvim_set_hl(0, "NormalNC", { bg = "none" })
-vim.api.nvim_set_hl(0, "NormalSB", { bg = "none" })
-vim.api.nvim_set_hl(0, "NormalSBFloat", { bg = "none" })
-vim.api.nvim_set_hl(0, "NormalSBNC", { bg = "none" })
-vim.api.nvim_set_hl(0, "CopilotSuggestion", { fg = "#555555", ctermfg = 8 })
+-- Transparent background. Strip only bg -- passing { bg = "none" } to
+-- nvim_set_hl replaces the whole group and would drop fg with it.
+for _, group in ipairs({
+    "Normal", "NormalFloat", "NormalNC",
+    "NormalSB", "NormalSBFloat", "NormalSBNC",
+}) do
+    local spec = vim.api.nvim_get_hl(0, { name = group, link = false })
+    spec.bg, spec.ctermbg = nil, nil
+    vim.api.nvim_set_hl(0, group, spec)
+end
+vim.api.nvim_set_hl(0, "CopilotSuggestion", { fg = "#8c8882", ctermfg = 8, italic = true })
 
 -- Movement
 vim.keymap.set({ "n", "v" }, "<C-d>", "<C-d>zz", opts)

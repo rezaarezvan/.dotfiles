@@ -4,3 +4,4 @@ __pycache__/
 *.txt
 .config/tmux/resurrect
 .config/tmux/plugins
+.config/fish/fish_variables
