@@ -45,7 +45,7 @@ vim.pack.add({
     { src = "https://github.com/ThePrimeagen/harpoon",            version = "harpoon2" },
     { src = "https://github.com/nvim-treesitter/nvim-treesitter", version = "main" },
     "https://github.com/lewis6991/gitsigns.nvim",
-    { src = "https://github.com/barrettruth/canola.nvim", version = "canola", },
+    { src = 'https://forge.barrettruth.com/barrettruth/canola.nvim', version = 'canola' },
     "https://github.com/mason-org/mason.nvim",
     "https://github.com/L3MON4D3/LuaSnip",
     "https://github.com/github/copilot.vim",
