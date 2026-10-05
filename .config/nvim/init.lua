@@ -10,6 +10,7 @@ vim.opt.wrap          = false
 vim.opt.hlsearch      = false
 vim.opt.termguicolors = true
 vim.opt.scrolloff     = 8
+vim.opt.sidescrolloff  = 999
 vim.opt.signcolumn    = "yes"
 vim.opt.isfname:append("@-@")
 vim.opt.colorcolumn    = "80"
