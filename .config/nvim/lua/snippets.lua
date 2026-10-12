@@ -12,17 +12,28 @@ local TEXT_NODES = {
     label_reference = true,
 }
 
-local function in_mathzone()
+local TYPST_MATH_NODES = { math = true }
+local TYPST_TEXT_NODES = { string = true }
+
+local function in_zone(math_nodes, text_nodes)
     local node = vim.treesitter.get_node({ ignore_injections = false })
     while node do
-        if TEXT_NODES[node:type()] then
+        if text_nodes[node:type()] then
             return false
-        elseif MATH_NODES[node:type()] then
+        elseif math_nodes[node:type()] then
             return true
         end
         node = node:parent()
     end
     return false
+end
+
+local function in_mathzone()
+    return in_zone(MATH_NODES, TEXT_NODES)
+end
+
+local function in_typst_math()
+    return in_zone(TYPST_MATH_NODES, TYPST_TEXT_NODES)
 end
 
 local function pipe(fns)
@@ -246,6 +257,16 @@ function M.setup()
         parse_snippet({ trig = "uargmax", name = "underargmax" }, "\\underset{$1}{\\arg\\max} \\ $0"),
         parse_snippet({ trig = "argmin", name = "argmin" }, "\\arg\\min \\ $0"),
         parse_snippet({ trig = "argmax", name = "argmax" }, "\\arg\\max \\ $0"),
+
+        parse_snippet({ trig = "norm", name = "norm" }, "\\norm{$1}$0"),
+        parse_snippet({ trig = "inner", name = "inner" }, "\\inner{$1}{$2}$0"),
+        parse_snippet({ trig = "PP", name = "prob" }, "\\mathbb{P}"),
+        parse_snippet({ trig = "KL", name = "KL" }, "\\KL($1 \\,\\|\\, $2)$0"),
+        parse_snippet({ trig = "TT", name = "transpose" }, "^\\top"),
+        parse_snippet({ trig = "inv", name = "inverse" }, "^{-1}"),
+        parse_snippet({ trig = "ind", name = "indicator" }, "\\mathbb{1}"),
+        parse_snippet({ trig = "prop", name = "propto" }, "\\propto "),
+        parse_snippet({ trig = "sse", name = "subseteq" }, "\\subseteq "),
     })
 
     -- Fraction snippets
@@ -276,6 +297,48 @@ function M.setup()
             default_priority = 0,
         })
     end
+
+    local typ = ls.extend_decorator.apply(ls.parser.parse_snippet, {
+        wordTrig = false,
+        condition = in_typst_math,
+    })
+
+    ls.add_snippets("typst", {
+        typ({ trig = "sum", name = "sum" }, "sum_($1)^($2) $0"),
+        typ({ trig = "prod", name = "prod" }, "prod_($1)^($2) $0"),
+        typ({ trig = "int", name = "integral" }, "integral_($1)^($2) $0"),
+        typ({ trig = "lim", name = "lim" }, "lim_($1 -> ${2:oo}) $0"),
+        typ({ trig = "partial", name = "partial" }, "(partial $1)/(partial $2) $0"),
+
+        typ({ trig = "sqrt", name = "sqrt" }, "sqrt($1)$0"),
+        typ({ trig = "hat", name = "hat" }, "hat($1)$0"),
+        typ({ trig = "bar", name = "bar" }, "overline($1)$0"),
+        typ({ trig = "abs", name = "abs" }, "abs($1)$0"),
+        typ({ trig = "norm", name = "norm" }, "norm($1)$0"),
+        typ({ trig = "inner", name = "inner" }, "angle.l $1, $2 angle.r$0"),
+        typ({ trig = "KL", name = "KL" }, "KL($1 || $2)$0"),
+
+        typ({ trig = "bmat", name = "bmat" }, "mat(delim: \"[\", $1)$0"),
+        typ({ trig = "pmat", name = "pmat" }, "mat($1)$0"),
+        typ({ trig = "vmat", name = "vmat" }, "mat(delim: \"|\", $1)$0"),
+        typ({ trig = "cases", name = "cases" }, "cases($1)$0"),
+        typ({ trig = "underbrace", name = "underbrace" }, "underbrace($1, $2)$0"),
+
+        typ({ trig = "mathcal", name = "mathcal" }, "cal($1)$0"),
+        typ({ trig = "mathbf", name = "mathbf" }, "bold($1)$0"),
+        typ({ trig = "mathbb", name = "mathbb" }, "bb($1)$0"),
+        typ({ trig = "mathrm", name = "mathrm" }, "upright($1)$0"),
+        typ({ trig = "DD", name = "D" }, "cal(D)"),
+        typ({ trig = "TT", name = "transpose" }, "^top"),
+        typ({ trig = "inv", name = "inverse" }, "^(-1)"),
+        typ({ trig = "ind", name = "indicator" }, "bb(1)"),
+
+        typ({ trig = "uargmin", name = "underargmin" }, "limits(arg min)_($1) $0"),
+        typ({ trig = "uargmax", name = "underargmax" }, "limits(arg max)_($1) $0"),
+        typ({ trig = "text", name = "text" }, "\"$1\"$0"),
+        typ({ trig = "__", name = "subscript" }, "_($1)$0"),
+        typ({ trig = "^^", name = "superscript" }, "^($1)$0"),
+    }, { type = "autosnippets" })
 end
 
 return M
