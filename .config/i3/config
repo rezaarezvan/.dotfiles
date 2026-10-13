@@ -2,7 +2,7 @@
 set $mod Mod1
 
 # Font
-font pango:DepartureMono Nerd Font 11
+font pango:AporeticSansMonoNerdFont 11
 
 # Thin borders
 hide_edge_borders both
