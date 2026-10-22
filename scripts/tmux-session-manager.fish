@@ -8,6 +8,11 @@ function _list_sessions
     tmux list-sessions -F "#{session_name}" 2>/dev/null
 end
 
+function _new_session
+    read -P "New session name: " newname
+    test -n "$newname" && tmux new -d -s "$newname" -c (pwd)
+end
+
 while true
     set -l raw_choice (_list_sessions | fzf \
         --prompt="sessions > " \
@@ -25,15 +30,13 @@ while true
     switch $key
         case enter
             if test "$sel" = "+ Create New Session..."
-                read -P "New session name: " newname
-                test -n "$newname" && tmux new -d -s "$newname" -c (pwd)
+                _new_session
             else if test -n "$sel"
                 tmux switch-client -t $sel
                 exit 0
             end
         case ctrl-e
-            read -P "New session name: " newname
-            test -n "$newname" && tmux new -d -s "$newname" -c (pwd)
+            _new_session
         case ctrl-x
             if test -n "$sel" -a "$sel" != "+ Create New Session..."
                 tmux kill-session -t $sel

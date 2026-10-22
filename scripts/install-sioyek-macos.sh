@@ -71,7 +71,8 @@ install_app() {
 
     xattr -cr "$APP_PATH"
     codesign --force --deep --sign - "$APP_PATH"
-    ln -sfn "$APP_PATH/Contents/MacOS/sioyek" "$CLI_PATH"
+    # the wrapper pins LC_NUMERIC, see scripts/sioyek
+    ln -sfn "$(cd "$(dirname "$0")" && pwd)/sioyek" "$CLI_PATH"
 }
 
 [[ "$(uname -s)" == "Darwin" ]] || die "this installer only supports macOS"

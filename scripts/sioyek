@@ -1,0 +1,7 @@
+#!/bin/sh
+# sioyek parses its database with atof, which a decimal-comma LC_NUMERIC truncates to integers
+for bin in "$HOME/.cache/sioyek-src/build/sioyek" /Applications/sioyek.app/Contents/MacOS/sioyek; do
+    [ -x "$bin" ] && LC_NUMERIC=C exec "$bin" "$@"
+done
+echo "sioyek: no build found" >&2
+exit 1
