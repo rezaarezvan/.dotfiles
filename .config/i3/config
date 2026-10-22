@@ -138,7 +138,7 @@ exec --no-startup-id dunst
 exec --no-startup-id xrandr --output DP-0 --primary --refresh 390 --mode 1920x1080 --pos 1080x0 --rotate normal
 exec --no-startup-id nvidia-settings -a "DigitalVibrance=1023"
 
-exec --no-startup-id feh --no-fehbg --bg-scale "$HOME/Pictures/_pic/Wallpapers/705139ansdl.jpeg"
+exec_always --no-startup-id feh --no-fehbg --bg-scale "$HOME/Pictures/_pic/Wallpapers/705139ansdl.jpeg"
 bindsym Print exec --no-startup-id maim "$HOME/Pictures/$(date)"
 
 exec --no-startup-id ghostty

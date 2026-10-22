@@ -1,3 +1,5 @@
+fish_add_path -gP ~/.cargo/bin ~/.juliaup/bin
+
 # nvim nightly from bob (`bob update nightly`)
 fish_add_path -gPm ~/.local/share/bob/nvim-bin ~/.local/bin /opt/homebrew/bin /opt/homebrew/sbin
 fish_add_path -gPa ~/bin
