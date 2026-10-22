@@ -19,9 +19,8 @@ while true
 
     test -z "$raw_choice" && exit 0
 
-    set -l lines (string split -n '\n' -- $raw_choice)
-    set -l key $lines[1]
-    set -l sel $lines[2]
+    set -l key $raw_choice[1]
+    set -l sel $raw_choice[2]
 
     switch $key
         case enter

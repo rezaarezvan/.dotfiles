@@ -1,7 +1,6 @@
 .env*
 __pycache__/
 *.pyc
-*.txt
 .config/tmux/resurrect
 .config/tmux/plugins
 .config/fish/fish_variables

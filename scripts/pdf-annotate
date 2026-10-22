@@ -1,0 +1,150 @@
+#!/usr/bin/env -S uv run --quiet --script
+# /// script
+# requires-python = ">=3.10"
+# dependencies = ["pymupdf"]
+# ///
+"""Write sioyek's highlights and bookmarks into the PDF as standard annotations, in place."""
+
+import os
+import sys
+import json
+import bisect
+import colorsys
+import tempfile
+from pathlib import Path
+
+import pymupdf
+
+TAG = "sioyek"
+DEFAULT_COLORS = [
+    (0.94, 0.64, 1.00), (0.00, 0.46, 0.86), (0.60, 0.25, 0.00), (0.30, 0.00, 0.36), (0.10, 0.10, 0.10),
+    (0.00, 0.36, 0.19), (0.17, 0.81, 0.28), (1.00, 0.80, 0.60), (0.50, 0.50, 0.50), (0.58, 1.00, 0.71),
+    (0.56, 0.49, 0.00), (0.62, 0.80, 0.00), (0.76, 0.00, 0.53), (0.00, 0.20, 0.50), (1.00, 0.64, 0.02),
+    (1.00, 0.66, 0.73), (0.26, 0.40, 0.00), (1.00, 0.00, 0.06), (0.37, 0.95, 0.95), (0.00, 0.60, 0.56),
+    (0.88, 1.00, 0.40), (0.45, 0.04, 1.00), (0.60, 0.00, 0.00), (1.00, 1.00, 0.50), (1.00, 1.00, 0.00),
+    (1.00, 0.31, 0.02),
+]
+
+
+def read_prefs():
+    prefs = Path(os.environ.get("XDG_CONFIG_HOME", Path.home() / ".config")) / "sioyek/prefs_user.config"
+    colors, annotations_dir = dict(zip("abcdefghijklmnopqrstuvwxyz", DEFAULT_COLORS)), None
+    for line in prefs.read_text().splitlines() if prefs.exists() else ():
+        parts = line.split()
+        if len(parts) == 4 and parts[0].startswith("highlight_color_"):
+            colors[parts[0][-1]] = tuple(map(float, parts[1:]))
+        elif len(parts) == 2 and parts[0] == "annotations_directory":
+            annotations_dir = Path(parts[1]).expanduser()
+    return colors, annotations_dir
+
+
+def sidecar_path(pdf, annotations_dir):
+    """Same naming as sioyek's get_addtional_sioyek_file_path."""
+    if annotations_dir is None:
+        return pdf.with_name(pdf.name + ".sioyek.annotations")
+    return annotations_dir / (str(pdf).replace("/", "_").replace("\\", "_").replace(":", "_") + ".sioyek.annotations")
+
+
+def lighten(rgb):
+    """QColor::lighter as used by sioyek's embed_annotations, so colours match its own export."""
+    lightness = colorsys.rgb_to_hls(*rgb)[1]
+    if (factor := int(0.9 / max(lightness, 1e-6) * 100) / 100) <= 1:
+        return rgb
+    h, s, v = colorsys.rgb_to_hsv(*rgb)
+    v *= factor
+    return colorsys.hsv_to_rgb(h, max(0.0, s - (v - 1)), 1.0) if v > 1 else colorsys.hsv_to_rgb(h, s, v)
+
+
+def page_layout(doc):
+    """sioyek stacks pages vertically with integer heights and centres x on each page."""
+    widths, tops, acc = [], [], 0
+    for page in doc:
+        widths.append(int(page.bound().width))
+        tops.append(acc)
+        acc += int(page.bound().height)
+
+    def to_page(x, y):
+        i = max(0, bisect.bisect_left(tops, y) - 1)
+        return i, pymupdf.Point(widths[i] / 2 + x, y - tops[i])
+
+    return to_page
+
+
+def word_quads(page, start, stop):
+    """Word-snapped selection from start to stop in reading order, merged per line like sioyek."""
+    words = page.get_text("words", sort=False)
+    if not words:
+        return []
+    nearest = lambda p: min(range(len(words)), key=lambda k: p.distance_to(pymupdf.Rect(words[k][:4])))
+    a, b = sorted((nearest(start), nearest(stop)))
+    lines = {}
+    for w in words[a : b + 1]:
+        lines[w[5], w[6]] = lines.get((w[5], w[6]), pymupdf.Rect(w[:4])) | pymupdf.Rect(w[:4])
+    return [r.quad for r in lines.values()]
+
+
+def add_highlight(page, quads, kind):
+    if kind == "_":
+        return page.add_strikeout_annot(quads)
+    return page.add_underline_annot(quads) if kind.isupper() else page.add_highlight_annot(quads)
+
+
+def add_bookmark(pages, to_page, b, colors):
+    text = b.get("description", "")
+    if b.get("begin_y", -1) > -1 and b.get("end_y", -1) > -1:
+        (i, p0), (_, p1) = to_page(b["begin_x"], b["begin_y"]), to_page(b["end_x"], b["end_y"])
+        rect = pymupdf.Rect(p0, p1).normalize()
+        if text.startswith("#"):
+            annot = pages[i].add_rect_annot(rect)
+            annot.set_colors(stroke=colors.get(text[1:2], (0, 0, 0)))
+            return annot
+        rgb = (b.get("color_red", 0), b.get("color_green", 0), b.get("color_blue", 0))
+        return pages[i].add_freetext_annot(rect, text, fontsize=max(b.get("font_size", 11), 1), text_color=rgb)
+    if b.get("begin_y", -1) > -1:
+        i, p = to_page(b["begin_x"], b["begin_y"])
+        return pages[i].add_text_annot(p, text)
+    i, p = to_page(0, b["y_offset"])
+    return pages[i].add_text_annot(pymupdf.Point(10, p.y), text)
+
+
+def main():
+    if len(sys.argv) != 2:
+        sys.exit("usage: pdf-annotate <file.pdf>")
+    pdf = Path(sys.argv[1]).absolute()
+    colors, annotations_dir = read_prefs()
+    if not (sidecar := sidecar_path(pdf, annotations_dir)).exists():
+        sys.exit(f"{sidecar} not found, run write_annotations_file in sioyek first")
+    data = json.loads(sidecar.read_text())
+    doc = pymupdf.open(pdf)
+    to_page, pages = page_layout(doc), list(doc)
+
+    for page in pages:
+        for annot in [a for a in page.annots() if a.info.get("title") == TAG]:
+            page.delete_annot(annot)
+
+    for h in data.get("highlights", []):
+        (i, start), (j, stop) = to_page(h["selection_begin_x"], h["selection_begin_y"]), to_page(h["selection_end_x"], h["selection_end_y"])
+        if not (quads := word_quads(pages[i], start, stop if i == j else pages[i].rect.br)):
+            continue
+        kind = chr(h["type"]) if isinstance(h["type"], int) else h["type"]
+        annot = add_highlight(pages[i], quads, kind)
+        annot.set_colors(stroke=lighten(colors.get(kind.lower(), DEFAULT_COLORS[0])))
+        annot.set_info(title=TAG, content=h.get("text_annot", ""))
+        annot.update()
+
+    for b in data.get("bookmarks", []):
+        annot = add_bookmark(pages, to_page, b, colors)
+        annot.set_info(title=TAG, content=b.get("description", ""))
+        annot.update()
+
+    if doc.can_save_incrementally():
+        return doc.saveIncr()
+    fd, tmp = tempfile.mkstemp(suffix=".pdf", dir=pdf.parent)
+    os.close(fd)
+    doc.save(tmp, garbage=1, deflate=True)
+    doc.close()
+    os.replace(tmp, pdf)
+
+
+if __name__ == "__main__":
+    main()

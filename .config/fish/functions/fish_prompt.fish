@@ -1,56 +1,24 @@
 function fish_prompt --description 'Write out the prompt'
-  set last_ret $status
+    set -l last_ret $status
 
-  # Palette -- Biscuit Mar Dark
-  set -l base01 ffe9c7
-  set -l base02 9c8181
-  set -l base03 967a7a
+    # Biscuit Mar Dark
+    set -l base01 ffe9c7
+    set -l base02 9c8181
+    set -l base03 967a7a
+    set -l c_error e3556f
+    set -l c_success 949f6b
+    set -l c_orange e39c45
+    set -l c_magenta ca6bac
 
-  set -l c_error e3556f
-  set -l c_success 949f6b
+    set -l ret_color $c_success
+    test $last_ret -gt 0; and set ret_color $c_error
 
-  set -l c_yellow e39c45
-  set -l c_magenta ca6bac
+    set -l venv
+    set -q VIRTUAL_ENV; and set venv ' '(set_color $c_magenta)'('(path basename $VIRTUAL_ENV)')'
 
-  # Just calculate these once, to save a few cycles when displaying the prompt
-  if not set -q __fish_prompt_hostname
-    set -g __fish_prompt_hostname (hostname|cut -d . -f 1)
-  end
-
-  if not set -q __fish_prompt_cwd
-    set -g __fish_prompt_cwd (set_color $fish_color_cwd)
-  end
-
-  if set -q VIRTUAL_ENV
-    set venv (_fisk_concat " " (set_color $c_magenta) "(" (basename "$VIRTUAL_ENV") ")" (set_color normal))
-  else
-    set venv ""
-  end
-
-  set ret_color $c_success
-
-  if test $last_ret -gt 0
-    set ret_color $c_error
-  end
-
-  set -l ret_part (_fisk_concat \
-    (set_color $base03) '[' \
-    (set_color $ret_color) $last_ret \
-    (set_color $base03) ']' \
-  )
-
-  set -l user_part (_fisk_concat \
-    (set_color $base01) $USER \
-    (set_color $base02) @ \
-    (set_color $base01) $__fish_prompt_hostname \
-  )
-
-  # Virtualenv, git, &c.
-  set -l context_part (_fisk_concat \
-    $__fish_prompt_cwd (prompt_pwd) $venv (set_color -o $c_yellow) (__fish_git_prompt) \
-  )
-
-  set -l prompt_end (_fisk_concat (set_color $base01) '➞')
-
-  echo -n (_fisk_concat $ret_part " " $user_part " " $context_part " " (set_color $c_error) "ζ" (set_color normal) $prompt_end (set_color normal) " ")
+    printf %s \
+        (set_color $base03) '[' (set_color $ret_color) $last_ret (set_color $base03) '] ' \
+        (set_color $base01) $USER (set_color $base02) @ (set_color $base01) (prompt_hostname) ' ' \
+        (set_color $fish_color_cwd) (prompt_pwd) $venv (set_color -o $c_orange) (fish_git_prompt) ' ' \
+        (set_color $c_error) 'ζ' (set_color normal) (set_color $base01) '➞' (set_color normal) ' '
 end

@@ -4,13 +4,14 @@ some of my configs, stored as if they were in my `$HOME` 🏡
 ![pic](../assets/image.png)
 ![pic](../assets/fetch.png)
 
-# setup
-fix [stow](https://www.gnu.org/software/stow/) and then:
+## setup
 ```sh
-git clone https://github.com/rezaarezvan/.dotfiles
-cd .dotfiles
+git clone https://github.com/rezaarezvan/.dotfiles ~/.dotfiles
+cd ~/.dotfiles
 stow .
+git clone https://github.com/tmux-plugins/tpm ~/.config/tmux/plugins/tpm
+mkdir -p ~/.local/share/sioyek/annotations
 ```
 
-# snippets
+## snippets
 my nvim snippets are based on [luasnip-latex-snippets.nvim](https://github.com/iurimateus/luasnip-latex-snippets.nvim)

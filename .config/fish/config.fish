@@ -1,30 +1,24 @@
-set -x CUDA_HOME /usr/local/cuda
-set -x PATH $CUDA_HOME/bin $PATH
-set -x LD_LIBRARY_PATH $CUDA_HOME/lib64 $LD_LIBRARY_PATH
-set -x PATH $PATH ~/bin
+# nvim nightly from bob (`bob update nightly`)
+fish_add_path -gPm ~/.local/share/bob/nvim-bin ~/.local/bin /opt/homebrew/bin /opt/homebrew/sbin
+fish_add_path -gPa ~/bin
 
-# Neovim nightly managed by bob (update with `bob update nightly`)
-set -x PATH ~/.local/share/bob/nvim-bin $PATH
-
-# node — latest version installed under ~/.nvm (no nvm machinery)
 if test -d ~/.nvm/versions/node
-    set -x PATH (command ls -d ~/.nvm/versions/node/*/bin | sort -V | tail -1) $PATH
+    fish_add_path -gP (command ls -d ~/.nvm/versions/node/*/bin | sort -V | tail -1)
 end
 
-# Only for interactive sessions
+if test -d /usr/local/cuda
+    set -gx CUDA_HOME /usr/local/cuda
+    fish_add_path -gP $CUDA_HOME/bin
+    contains -- $CUDA_HOME/lib64 $LD_LIBRARY_PATH
+    or set -gx LD_LIBRARY_PATH $CUDA_HOME/lib64 $LD_LIBRARY_PATH
+end
+
 if status is-interactive
     set -g fish_key_bindings fish_vi_key_bindings
     alias vim='nvim'
-    if command -q fd
-        set -x FZF_DEFAULT_COMMAND "fd --type d --hidden --exclude .git"
-    else if command -q fdfind
-        set -x FZF_DEFAULT_COMMAND "fdfind --type d --hidden --exclude .git"
+    command -q fd; and set -gx FZF_DEFAULT_COMMAND "fd --type f --hidden --exclude .git"
+
+    if not set -q TMUX; and command -q tmux
+        exec tmux new -A -s main
     end
 end
-
-# Start tmux only if not already in a tmux session and in an interactive shell
-if status is-interactive && not set -q TMUX
-    tmux
-    cd ~
-end
-export PATH="$HOME/.local/bin:$PATH"

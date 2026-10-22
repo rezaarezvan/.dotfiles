@@ -1,253 +1,94 @@
 #!/usr/bin/env python3
-"""Discover arXiv papers, attach PDFs to Zotero, and create Markdown notes."""
+"""List and search arXiv, and save papers (metadata + PDF) into the collection selected in Zotero."""
 
-from __future__ import annotations
-
-import json
 import os
 import re
 import sys
-import tempfile
+import json
+import secrets
+import urllib.parse
+import urllib.request
+import xml.etree.ElementTree as ET
 from pathlib import Path
-from typing import Any, Optional
 
-import arxiv
-from pyzotero import zotero
-
-
-ARXIV_ID_RE = re.compile(r"(?<!\d)(\d{4}\.\d{4,5})(?:v\d+)?", re.IGNORECASE)
+API = "https://export.arxiv.org/api/query"
+ZOTERO = "http://127.0.0.1:23119/connector"
+CACHE = Path(os.environ.get("XDG_CACHE_HOME", Path.home() / ".cache")) / "arxiv"
+NS = {"a": "http://www.w3.org/2005/Atom", "arxiv": "http://arxiv.org/schemas/atom"}
 
 
-def get_zotero():
-    required = ("ZOTERO_API_KEY", "ZOTERO_LIBRARY_ID", "ZOTERO_LIBRARY_TYPE")
-    missing = [name for name in required if not os.getenv(name)]
-    if missing:
-        raise RuntimeError(f"Missing environment variables: {', '.join(missing)}")
-    return zotero.Zotero(
-        os.environ["ZOTERO_LIBRARY_ID"],
-        os.environ["ZOTERO_LIBRARY_TYPE"],
-        os.environ["ZOTERO_API_KEY"],
-    )
+def fetch(url, data=None, headers={}):
+    with urllib.request.urlopen(urllib.request.Request(url, data=data, headers=headers), timeout=60) as r:
+        return r.read()
 
 
-def all_results(client, first_page):
-    return list(client.everything(first_page))
+def query(**params):
+    root = ET.fromstring(fetch(f"{API}?{urllib.parse.urlencode(params)}"))
+    return [paper(e) for e in root.findall("a:entry", NS)]
 
 
-def research_dir() -> Path:
-    configured = os.getenv("PHD_RESEARCH_DIR")
-    if not configured:
-        raise RuntimeError("Missing environment variable: PHD_RESEARCH_DIR")
-    path = Path(os.path.expandvars(configured)).expanduser()
-    if not path.is_dir():
-        raise RuntimeError(f"PHD_RESEARCH_DIR is not a directory: {path}")
-    return path
-
-
-def sanitize_filename(title: str) -> str:
-    clean = re.sub(r"[^\w\s-]", "", title.lower())
-    clean = re.sub(r"[\s_]+", "_", clean)
-    return clean[:80].strip("_") or "untitled"
-
-
-def format_authors(authors: list[Any]) -> str:
-    names = [str(author) for author in authors]
-    if len(names) <= 3:
-        return ", ".join(names)
-    return f"{names[0]}, {names[1]}, ... ({len(names)} authors)"
-
-
-def paper_record(result: Any) -> dict[str, str]:
+def paper(e):
+    text = lambda tag: " ".join((e.findtext(tag, "", NS) or "").split())
     return {
-        "id": result.get_short_id(),
-        "title": result.title.replace("\n", " "),
-        "authors": format_authors(result.authors),
-        "date": result.published.strftime("%Y-%m-%d"),
+        "id": re.sub(r"v\d+$", "", text("a:id").rsplit("/abs/", 1)[-1]),
+        "title": text("a:title"),
+        "authors": [" ".join(a.findtext("a:name", "", NS).split()) for a in e.findall("a:author", NS)],
+        "date": text("a:published")[:10],
+        "abstract": text("a:summary"),
     }
 
 
-def list_papers(category: str, count: int) -> list[dict[str, str]]:
-    search = arxiv.Search(
-        query=f"cat:{category}",
-        max_results=count,
-        sort_by=arxiv.SortCriterion.SubmittedDate,
-        sort_order=arxiv.SortOrder.Descending,
-    )
-    return [paper_record(result) for result in arxiv.Client().results(search)]
+def show(papers):
+    for p in papers:
+        authors = ", ".join(p["authors"][:2]) + (" et al." if len(p["authors"]) > 2 else "")
+        print(f"{p['id']}\t{p['title']}\t{authors}\t{p['date']}")
 
 
-def search_papers(query: str, count: int) -> list[dict[str, str]]:
-    search = arxiv.Search(
-        query=query,
-        max_results=count,
-        sort_by=arxiv.SortCriterion.Relevance,
-    )
-    return [paper_record(result) for result in arxiv.Client().results(search)]
+def creator(name):
+    first, _, last = name.rpartition(" ")
+    return {"firstName": first, "lastName": last, "creatorType": "author"}
 
 
-def get_inbox_key(client: Any) -> str:
-    collections = all_results(client, client.collections(limit=100))
-    for collection in collections:
-        data = collection["data"]
-        if data["name"] == "00 Inbox" and not data.get("parentCollection"):
-            return collection["key"]
-    raise RuntimeError("Zotero collection '00 Inbox' is missing")
-
-
-def canonical_arxiv_id(arxiv_id: str) -> str:
-    match = ARXIV_ID_RE.search(arxiv_id)
-    if not match:
-        return arxiv_id.split("v", 1)[0].lower()
-    return match.group(1).lower()
-
-
-def item_arxiv_id(item: dict[str, Any]) -> Optional[str]:
-    data = item.get("data", {})
-    haystack = "\n".join(
-        str(data.get(field, "")) for field in ("extra", "url", "title")
-    )
-    match = ARXIV_ID_RE.search(haystack)
-    return match.group(1).lower() if match else None
-
-
-def find_arxiv_item(client: Any, arxiv_id: str) -> Optional[dict[str, Any]]:
-    canonical_id = canonical_arxiv_id(arxiv_id)
-    items = all_results(client, client.top(limit=100))
-    matches = [
-        item
-        for item in items
-        if item.get("data", {}).get("itemType")
-        not in {"attachment", "note", "annotation"}
-        and item_arxiv_id(item) == canonical_id
-    ]
-    if not matches:
-        return None
-    return min(matches, key=lambda item: item.get("data", {}).get("dateAdded", ""))
-
-
-def has_pdf_attachment(client: Any, item_key: str) -> bool:
-    children = all_results(client, client.children(item_key, limit=100))
-    return any(
-        child.get("data", {}).get("itemType") == "attachment"
-        and child.get("data", {}).get("contentType") == "application/pdf"
-        for child in children
-    )
-
-
-def create_zotero_item(client: Any, paper: Any, category: str, inbox_key: str) -> str:
-    item = client.item_template("journalArticle")
-    item["title"] = paper.title
-    item["creators"] = [
-        {"creatorType": "author", "name": str(author)} for author in paper.authors
-    ]
-    item["date"] = str(paper.published.date())
-    item["abstractNote"] = paper.summary
-    item["url"] = paper.entry_id
-    item["extra"] = f"arXiv:{paper.get_short_id().split('v', 1)[0]}"
-    item["collections"] = [inbox_key]
-    item["tags"] = [
-        {"tag": "source/arxiv"},
-        {"tag": "status/to-read"},
-        {"tag": f"arxiv/{category.lower()}"},
-    ]
-
-    response = client.create_items([item])
-    successful = response.get("successful", {})
-    if "0" not in successful:
-        raise RuntimeError(f"Zotero rejected the new item: {response}")
-    return successful["0"]["key"]
-
-
-def write_note(paper: Any) -> Path:
-    year = str(paper.published.year)
-    notes_dir = research_dir() / "papers" / year
-    notes_dir.mkdir(parents=True, exist_ok=True)
-    base_name = f"{paper.get_short_id()}_{sanitize_filename(paper.title)}"
-    notes_path = notes_dir / f"{base_name}.md"
-    if notes_path.exists():
-        return notes_path
-
-    authors = ", ".join(str(author) for author in paper.authors)
-    notes_path.write_text(
-        f"""# {paper.title}
-
-- **arXiv:** {paper.get_short_id()}
-- **Authors:** {authors}
-- **Published:** {paper.published:%Y-%m-%d}
-- **URL:** {paper.entry_id}
-- **Status:** to-read
-
-## Abstract
-
-{paper.summary}
-
-## Notes
-
-""",
-        encoding="utf-8",
-    )
-    return notes_path
-
-
-def download_paper(arxiv_id: str, category: str) -> dict[str, Any]:
-    search = arxiv.Search(id_list=[arxiv_id])
-    paper = next(arxiv.Client().results(search), None)
-    if paper is None:
-        raise RuntimeError(f"arXiv paper not found: {arxiv_id}")
-
-    client = get_zotero()
-    inbox_key = get_inbox_key(client)
-    existing = find_arxiv_item(client, paper.get_short_id())
-
-    temp_dir = Path(tempfile.mkdtemp(prefix="arxiv-"))
-    pdf_name = f"{paper.get_short_id()}_{sanitize_filename(paper.title)}.pdf"
-    pdf_path = Path(paper.download_pdf(dirpath=temp_dir, filename=pdf_name))
-
-    duplicate = existing is not None
-    item_key = (
-        existing["key"]
-        if existing
-        else create_zotero_item(client, paper, category, inbox_key)
-    )
-    if not duplicate or not has_pdf_attachment(client, item_key):
-        client.attachment_simple([str(pdf_path)], item_key)
-
-    notes_path = write_note(paper)
-    return {
-        "pdf": str(pdf_path),
-        "notes": str(notes_path),
-        "zotero_key": item_key,
-        "duplicate": duplicate,
+def save_to_zotero(p, pdf):
+    """The same two calls the browser connector makes: item metadata, then the PDF as its child."""
+    session, url = secrets.token_hex(8), f"https://arxiv.org/abs/{p['id']}"
+    item = {
+        "id": "1", "itemType": "preprint", "title": p["title"], "creators": [creator(a) for a in p["authors"]],
+        "date": p["date"], "abstractNote": p["abstract"], "url": url, "repository": "arXiv",
+        "archiveID": f"arXiv:{p['id']}", "DOI": f"10.48550/arXiv.{p['id']}",
     }
+    body = {"sessionID": session, "uri": url, "items": [item]}
+    fetch(f"{ZOTERO}/saveItems", json.dumps(body).encode(), {"Content-Type": "application/json"})
+    meta = {"sessionID": session, "parentItemID": "1", "title": "Full Text PDF", "url": f"https://arxiv.org/pdf/{p['id']}"}
+    fetch(f"{ZOTERO}/saveAttachment", pdf.read_bytes(), {"Content-Type": "application/pdf", "X-Metadata": json.dumps(meta)})
 
 
-def parse_count(value: str) -> int:
-    count = int(value)
-    if not 1 <= count <= 100:
-        raise ValueError("result count must be between 1 and 100")
-    return count
-
-
-def main() -> int:
+def add(arxiv_id):
+    if not (papers := query(id_list=arxiv_id, max_results=1)):
+        sys.exit(f"arXiv paper not found: {arxiv_id}")
+    p = papers[0]
+    pdf = CACHE / f"{p['id']}.pdf"
+    if not pdf.exists():
+        CACHE.mkdir(parents=True, exist_ok=True)
+        pdf.write_bytes(fetch(f"https://arxiv.org/pdf/{p['id']}"))
     try:
-        if len(sys.argv) == 4 and sys.argv[1] == "list":
-            print(json.dumps(list_papers(sys.argv[2], parse_count(sys.argv[3]))))
-        elif len(sys.argv) == 4 and sys.argv[1] == "search":
-            print(json.dumps(search_papers(sys.argv[2], parse_count(sys.argv[3]))))
-        elif len(sys.argv) == 4 and sys.argv[1] == "download":
-            print(json.dumps(download_paper(sys.argv[2], sys.argv[3])))
-        else:
-            print(
-                "Usage: arxiv_backend.py {list <category> <count>|"
-                "search <query> <count>|download <arxiv-id> <category>}",
-                file=sys.stderr,
-            )
-            return 2
-    except Exception as exc:
-        print(f"arXiv workflow failed: {exc}", file=sys.stderr)
-        return 1
-    return 0
+        save_to_zotero(p, pdf)
+    except OSError as e:
+        print(f"not saved to Zotero (is it running?): {e}", file=sys.stderr)
+    print(pdf)
+
+
+def main():
+    cmd, args = (sys.argv[1], sys.argv[2:]) if len(sys.argv) > 1 else ("", [])
+    if cmd == "list" and len(args) == 2:
+        show(query(search_query=f"cat:{args[0]}", sortBy="submittedDate", sortOrder="descending", max_results=args[1]))
+    elif cmd == "search" and len(args) == 2:
+        show(query(search_query=" AND ".join(f"all:{w}" for w in args[0].split()), sortBy="relevance", max_results=args[1]))
+    elif cmd == "add" and len(args) == 1:
+        add(args[0])
+    else:
+        sys.exit("usage: arxiv_backend.py {list <category> <count> | search <query> <count> | add <id>}")
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    main()

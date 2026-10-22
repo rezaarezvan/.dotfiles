@@ -8,7 +8,6 @@ vim.opt.shiftwidth    = 4
 vim.opt.expandtab     = true
 vim.opt.wrap          = false
 vim.opt.hlsearch      = false
-vim.opt.termguicolors = true
 vim.opt.scrolloff     = 8
 vim.opt.sidescrolloff  = 999
 vim.opt.signcolumn    = "yes"
@@ -20,7 +19,6 @@ vim.opt.foldlevelstart = 1
 vim.opt.nu             = true
 vim.opt.relativenumber = true
 vim.opt.swapfile       = false
-vim.opt.undodir        = os.getenv("HOME") .. "/.vim/undodir"
 vim.opt.undofile       = true
 vim.o.mouse            = 'a'
 vim.o.breakindent      = true
@@ -41,19 +39,16 @@ vim.g.canola = {
 }
 
 vim.pack.add({
-    "https://github.com/nvim-lua/plenary.nvim",
-    "https://github.com/nvim-telescope/telescope.nvim",
-    { src = "https://github.com/ThePrimeagen/harpoon",            version = "harpoon2" },
     { src = "https://github.com/nvim-treesitter/nvim-treesitter", version = "main" },
     "https://github.com/lewis6991/gitsigns.nvim",
     { src = 'https://forge.barrettruth.com/barrettruth/canola.nvim', version = 'canola' },
     "https://github.com/mason-org/mason.nvim",
     "https://github.com/L3MON4D3/LuaSnip",
-    "https://github.com/github/copilot.vim",
 })
 
+require('vim._core.ui2').enable({})
+
 -- Theme
-vim.opt.background = "dark"
 vim.cmd.colorscheme("biscuit-dark")
 
 -- Transparent background. Strip only bg -- passing { bg = "none" } to
@@ -66,7 +61,7 @@ for _, group in ipairs({
     spec.bg, spec.ctermbg = nil, nil
     vim.api.nvim_set_hl(0, group, spec)
 end
-vim.api.nvim_set_hl(0, "CopilotSuggestion", { fg = "#8c8882", ctermfg = 8, italic = true })
+vim.api.nvim_set_hl(0, "ComplHint", { fg = "#8c8882", ctermfg = 8, italic = true })
 
 -- Movement
 vim.keymap.set({ "n", "v" }, "<C-d>", "<C-d>zz", opts)
@@ -115,32 +110,58 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 vim.api.nvim_create_autocmd('BufWritePre', {
     group = vim.api.nvim_create_augroup('TrimWhitespace', {}),
     pattern = '*',
-    callback = function()
+    callback = function(args)
+        local bo = vim.bo[args.buf]
+        if not bo.modifiable or bo.binary or bo.buftype ~= '' then return end
         local view = vim.fn.winsaveview()
         vim.cmd([[keeppatterns %s/\s\+$//e]])
         vim.fn.winrestview(view)
     end,
 })
 
--- Harpoon setup
-do
-    local harpoon = require("harpoon")
-    harpoon:setup()
-
-    vim.keymap.set("n", "<leader>a", function() harpoon:list():add() end)
-    vim.keymap.set("n", "<C-e>", function()
-        harpoon.ui:toggle_quick_menu(harpoon:list())
-    end)
-    for j = 1, 9 do
-        vim.keymap.set("n", "<leader>" .. j, function() harpoon:list():select(j) end)
-    end
+-- Arglist --------------------------------------------------------------
+vim.keymap.set("n", "<leader>a", "<cmd>$argadd % | argdedup<cr>")
+vim.keymap.set("n", "<C-e>", "<cmd>args<cr>")
+for j = 1, 9 do
+    vim.keymap.set("n", "<leader>" .. j, "<cmd>silent! " .. j .. "argument<cr>")
 end
 
--- Telescope ------------------------------------------------------------
+-- Find / grep ----------------------------------------------------------
 do
-    local builtin = require('telescope.builtin')
-    vim.keymap.set('n', '<leader>sf', builtin.find_files, { desc = 'Search Files' })
-    vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = 'Search by Grep' })
+    local files
+    vim.o.findfunc = function(arg)
+        files = files or vim.fn.systemlist({ 'rg', '--files', '--hidden', '-g', '!.git' })
+        return arg == '' and files or vim.fn.matchfuzzy(files, arg)
+    end
+    vim.o.grepprg = 'rg --vimgrep --smart-case'
+    vim.o.wildmode = 'noselect:lastused,full'
+    vim.o.wildoptions = 'pum,fuzzy'
+
+    local group = vim.api.nvim_create_augroup('my.cmdline', {})
+    vim.api.nvim_create_autocmd('CmdlineEnter', {
+        group = group,
+        callback = function() files = nil end,
+    })
+    vim.api.nvim_create_autocmd('CmdlineChanged', {
+        group = group,
+        pattern = { ':', '/', '?' },
+        callback = function() vim.fn.wildtrigger() end,
+    })
+    vim.api.nvim_create_autocmd('CmdlineLeavePre', {
+        group = group,
+        pattern = ':',
+        callback = function()
+            local info = vim.fn.cmdcomplete_info()
+            if vim.fn.getcmdline():match('^%s*fin?d?%s') and info.selected == -1 and #(info.matches or {}) > 0 then
+                vim.fn.setcmdline('find ' .. info.matches[1])
+            end
+        end,
+    })
+
+    vim.keymap.set('n', '<C-n>', '<cmd>cnext<cr>')
+    vim.keymap.set('n', '<C-p>', '<cmd>cprev<cr>')
+    vim.keymap.set('n', '<leader>sf', ':find ')
+    vim.keymap.set('n', '<leader>sg', ':grep ')
 end
 
 -- Treesitter -----------------------------------------------------------
@@ -157,22 +178,18 @@ end
 -- LSP ------------------------------------------------------------------
 require('mason').setup() -- Prepends mason/bin to Neovim's PATH.
 
--- Server configs live in lsp/<name>.lua; install binaries once with :MasonInstall
-vim.lsp.enable({ 'pyright', 'ruff', 'clangd', 'tinymist' })
+vim.lsp.enable({ 'pyright', 'ruff', 'clangd', 'tinymist', 'texlab', 'copilot' })
 
 vim.api.nvim_create_autocmd('LspAttach', {
     group = vim.api.nvim_create_augroup('my.lsp', {}),
     callback = function(event)
         local client = assert(vim.lsp.get_client_by_id(event.data.client_id))
+        if client.name == 'copilot' then return end
         local bufnr = event.buf
-        local o = { buffer = bufnr }
+        local o = { buf = bufnr }
 
         vim.keymap.set('n', 'gd', vim.lsp.buf.definition, o)
         vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, o)
-        vim.keymap.set('n', '<C-s>', function()
-            vim.lsp.buf.format()
-            vim.cmd('w')
-        end, o)
 
         if client:supports_method('textDocument/completion') then
             vim.lsp.completion.enable(true, client.id, bufnr)
@@ -181,6 +198,22 @@ vim.api.nvim_create_autocmd('LspAttach', {
 })
 
 vim.diagnostic.config({ virtual_text = true })
+
+vim.keymap.set('n', '<C-s>', function()
+    if #vim.lsp.get_clients({ bufnr = 0, method = 'textDocument/formatting' }) > 0 then
+        vim.lsp.buf.format()
+    end
+    vim.cmd('w')
+end)
+
+vim.lsp.inline_completion.enable()
+vim.api.nvim_create_autocmd('FileType', {
+    pattern = { 'tex', 'plaintex', 'bib', 'typst', 'markdown', 'text', 'gitcommit' },
+    callback = function(args) vim.lsp.inline_completion.enable(false, { bufnr = args.buf }) end,
+})
+vim.keymap.set('i', '<Tab>', function()
+    if not vim.lsp.inline_completion.get() then return '<Tab>' end
+end, { expr = true })
 
 vim.opt.autocomplete = true
 vim.opt.complete:prepend('o')

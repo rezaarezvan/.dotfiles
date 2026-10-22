@@ -1,32 +1,21 @@
 #!/usr/bin/env fish
+# Fuzzy-search the Zotero library and copy the BibTeX entry (tmux prefix+z)
 
-# Quick citation lookup from Zotero library
-# Copies BibTeX entry to clipboard
+set -l api http://127.0.0.1:23119/api/users/0
 
-set -l script_dir (dirname (status filename))
-
-if test -f ~/.env_arxiv_zotero
-    source ~/.env_arxiv_zotero
-else
-    echo "Missing ~/.env_arxiv_zotero"
-    echo "Required: ZOTERO_API_KEY, ZOTERO_LIBRARY_ID, ZOTERO_LIBRARY_TYPE"
+set -l items (curl -sf "$api/items/top?format=json&sort=dateModified&direction=desc" | jq -r '
+    .[] | .data | select(.itemType != "note" and .itemType != "attachment")
+    | [.key, (.citationKey // ""), ((.creators[0].lastName // .creators[0].name // "?") + ((.date // "") | (" " + capture("(?<y>[0-9]{4})").y)? // "")), .title]
+    | @tsv')
+if test $status -ne 0 -o (count $items) -eq 0
+    echo "No answer from Zotero. Is it running with Settings > Advanced > \"Allow other applications\" on?"
+    read -P "Press enter to exit..."
     exit 1
 end
 
-if not python3 -c "import pyzotero" 2>/dev/null
-    echo "Missing pyzotero. Run: python3 -m pip install --user 'pyzotero<1.10'"
-    exit 1
-end
+set -l pick (printf '%s\n' $items | fzf --delimiter \t --with-nth 2.. --prompt="Cite > " --height=80% --border)
+test -z "$pick"; and exit 0
 
-set -l result (python3 $script_dir/cite_backend.py | \
-    fzf --prompt="Cite > " --height=80% --border \
-        --preview='echo {}' --preview-window=down:3:wrap)
-
-test -z "$result" && exit 0
-
-set -l zotero_key (echo $result | sed 's/.*\[\([^]]*\)\]$/\1/')
-
-set -l bibtex (python3 $script_dir/cite_backend.py --bibtex $zotero_key)
-or exit 1
-string join \n $bibtex | fish_clipboard_copy
-string join \n $bibtex
+set -l bib (curl -sf "$api/items/"(string split -f1 \t -- $pick)"?format=bibtex")
+string join \n -- $bib | fish_clipboard_copy
+string join \n -- $bib

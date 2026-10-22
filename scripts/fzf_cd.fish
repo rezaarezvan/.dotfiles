@@ -11,7 +11,7 @@ else
     return 1
 end
 
-set dir ($finder --type d --hidden --exclude .git . $HOME | \
+set dir ($finder --type d --hidden --exclude .git --exclude Library . $HOME | \
     fzf --prompt="cd: " --height=41% --border)
 
 test -n "$dir" && cd "$dir"
