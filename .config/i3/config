@@ -145,10 +145,12 @@ exec --no-startup-id ghostty
 exec --no-startup-id zen
 exec --no-startup-id discord
 exec --no-startup-id spotify
+exec --no-startup-id zotero
 
 assign [class="com.mitchellh.ghostty"] 1
 assign [class="zen"] 2
 assign [class="discord"] 3
 for_window [class="Spotify"] move to workspace 4
+assign [class="Zotero"] 5
 
 for_window [class="^.*"] border pixel 0

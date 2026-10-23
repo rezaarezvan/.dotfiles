@@ -12,6 +12,7 @@ after-startup-command = [
     'exec-and-forget open -a "Helium"',
     'exec-and-forget open -a Discord',
     'exec-and-forget open -a Spotify',
+    'exec-and-forget open -a Zotero',
 ]
 accordion-padding = 0
 on-focused-monitor-changed = ['move-mouse monitor-lazy-center']
@@ -84,6 +85,11 @@ run = 'move-node-to-workspace 3'
 [[on-window-detected]]
 if.app-id = 'com.spotify.client'
 run = 'move-node-to-workspace 4'
+
+# Workspace 5: Zotero
+[[on-window-detected]]
+if.app-id = 'org.zotero.zotero'
+run = 'move-node-to-workspace 5'
 
 # Resize mode (like i3)
 [mode.resize.binding]

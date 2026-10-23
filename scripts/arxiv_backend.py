@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 
-import os
 import re
 import sys
 import json
 import secrets
+import tempfile
 import urllib.parse
 import urllib.request
 import xml.etree.ElementTree as ET
@@ -12,7 +12,7 @@ from pathlib import Path
 
 API = "https://export.arxiv.org/api/query"
 ZOTERO = "http://127.0.0.1:23119/connector"
-CACHE = Path(os.environ.get("XDG_CACHE_HOME", Path.home() / ".cache")) / "arxiv"
+LOCAL_API = "http://127.0.0.1:23119/api/users/0"
 NS = {"a": "http://www.w3.org/2005/Atom", "arxiv": "http://arxiv.org/schemas/atom"}
 
 
@@ -88,19 +88,43 @@ def save_to_zotero(p, pdf):
     )
 
 
+def zotero_pdf(arxiv_id):
+    # Local path of the paper's PDF in Zotero, via the local API (Settings > Advanced)
+    url = f"https://arxiv.org/abs/{arxiv_id}"
+    params = urllib.parse.urlencode({"q": arxiv_id, "qmode": "everything"})
+    for item in json.loads(fetch(f"{LOCAL_API}/items/top?{params}")):
+        if item["data"].get("url") != url:
+            continue
+        for child in json.loads(fetch(f"{LOCAL_API}/items/{item['key']}/children")):
+            href = child["links"].get("enclosure", {}).get("href", "")
+            if href.startswith("file://") and href.endswith(".pdf"):
+                return Path(urllib.request.url2pathname(urllib.parse.urlparse(href).path))
+
+
+def target():
+    # Where saveItems will put new items: the row selected in Zotero's left pane
+    try:
+        sel = json.loads(fetch(f"{ZOTERO}/getSelectedCollection", b"{}", {"Content-Type": "application/json"}))
+    except OSError:
+        return "Zotero is not running"
+    return sel["name"] if sel.get("id") else f"{sel['name']} (no collection selected)"
+
+
 def add(arxiv_id):
     if not (papers := query(id_list=arxiv_id, max_results=1)):
         sys.exit(f"arXiv paper not found: {arxiv_id}")
     p = papers[0]
-    pdf = CACHE / f"{p['id']}.pdf"
-    if not pdf.exists():
-        CACHE.mkdir(parents=True, exist_ok=True)
-        pdf.write_bytes(fetch(f"https://arxiv.org/pdf/{p['id']}"))
     try:
-        save_to_zotero(p, pdf)
+        if stored := zotero_pdf(p["id"]):
+            print(stored)
+            return
+        with tempfile.TemporaryDirectory() as tmp:
+            pdf = Path(tmp) / f"{p['id'].replace('/', '_')}.pdf"
+            pdf.write_bytes(fetch(f"https://arxiv.org/pdf/{p['id']}"))
+            save_to_zotero(p, pdf)
+        print(zotero_pdf(p["id"]) or sys.exit(f"saved {p['id']} but Zotero has no PDF for it"))
     except OSError as e:
-        print(f"not saved to Zotero (is it running?): {e}", file=sys.stderr)
-    print(pdf)
+        sys.exit(f"{e} (is Zotero running?)")
 
 
 def main():
@@ -122,11 +146,13 @@ def main():
                 max_results=args[1],
             )
         )
+    elif cmd == "target" and not args:
+        print(target())
     elif cmd == "add" and len(args) == 1:
         add(args[0])
     else:
         sys.exit(
-            "usage: arxiv_backend.py {list <category> <count> | search <query> <count> | add <id>}"
+            "usage: arxiv_backend.py {list <category> <count> | search <query> <count> | target | add <id>}"
         )
 
 

@@ -37,8 +37,9 @@ end
 
 test (count $papers) -eq 0; and fail "No papers found."
 
+set -l target (python3 $backend target)
 set -l picks (printf '%s\n' $papers | fzf --multi --delimiter \t --with-nth 2.. --height=80% --border \
-    --prompt="Papers > " --header="Tab: select | Enter: save to Zotero and open")
+    --prompt="Papers > " --header="Tab: select | Enter: save to $target and open")
 test -z "$picks"; and exit 0
 
 for pick in $picks
